@@ -4,7 +4,7 @@ deployment:
     - export DEPLOYPATH=/home/tenamakn/public_html
     - /bin/mkdir -p $DEPLOYPATH
     # Copy contents from the public folder to the public_html folder
-    - /bin/cp -R /home/tenamakn/repositories/maeregzewdu/public/* $DEPLOYPATH
+    - /bin/cp -R /home/tenamakn/repositories/tenamart-waitinglist/public/* $DEPLOYPATH
     # Run composer to install dependencies
     - cd $DEPLOYPATH && composer install --no-dev --optimize-autoloader
     # Set the correct permissions for storage and bootstrap/cache
