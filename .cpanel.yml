@@ -2,33 +2,24 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/tenamakn/public_html
-
-    # Create the deployment directory if it doesn't exist
     - /bin/mkdir -p $DEPLOYPATH
-
-    # Copy everything from the repository's public folder to public_html
-    - /bin/cp -R public/* $DEPLOYPATH
-
-    # Go to the repository root (where composer.json is)
-    - cd /home/tenamakn/repositories/maeregzewdu
-
-    # Install PHP dependencies
-    - composer install --no-dev --optimize-autoloader
-
-    # Set the correct permissions
-    - chmod -R 755 storage
-    - chmod -R 755 bootstrap/cache
-
-    # Clear Laravel caches
+    # Copy contents from the public folder to the public_html folder
+    - /bin/cp -R /home/tenamakn/repositories/maeregzewdu/public/* $DEPLOYPATH
+    # Run composer to install dependencies
+    - cd $DEPLOYPATH && composer install --no-dev --optimize-autoloader
+    # Set the correct permissions for storage and bootstrap/cache
+    - chmod -R 755 $DEPLOYPATH/storage
+    - chmod -R 755 $DEPLOYPATH/bootstrap/cache
+    # Set the correct permissions for vendor folder (optional, if it's inside the public_html folder)
+    - chmod -R 755 $DEPLOYPATH/vendor
+    # Clear the config cache
     - php artisan config:clear
     - php artisan route:clear
     - php artisan view:clear
-
-    # Run migrations and seeds (optional, remove if not ready)
+    # Run migrations and seed the database (optional)
     - php artisan migrate --force
     - php artisan db:seed --force
-
-    # Re-cache everything for production
+    # Cache everything for production
     - php artisan config:cache
     - php artisan route:cache
     - php artisan view:cache
