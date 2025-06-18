@@ -4,7 +4,30 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>TenaMart - Join the Waitlist</title>
+        <title>TenaMart – Join the Waitlist for Ethiopia’s New Pharmacy Marketplace</title>
+        <meta name="description" content="TenaMart is a new online pharmacy marketplace for Ethiopia. Join the waitlist to get early access and special offers.">
+        <meta name="robots" content="index, follow">
+        <meta name="keywords" content="TenaMart, Tena Mart, Ethiopia pharmacy, online medicine, pharmacy marketplace, digital health, online pharmacy, waitlist, early access, healthcare, medicine delivery">
+
+        <!-- Canonical -->
+        <link rel="canonical" href="https://tenamart.et/">
+
+        <!-- Open Graph (Facebook, LinkedIn) -->
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="TenaMart – Join the Waitlist">
+        <meta property="og:description" content="Get early access to Ethiopia’s first pharmacy marketplace.">
+        <meta property="og:image" content="{{ asset('favicon/og-image.png') }}">
+        <meta property="og:url" content="https://tenamart.et/">
+        <meta property="og:site_name" content="TenaMart">
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="TenaMart – Join the Waitlist">
+        <meta name="twitter:description" content="Be the first to access TenaMart — Ethiopia’s digital pharmacy platform.">
+        <meta name="twitter:image" content="{{ asset('favicon/og-image.png') }}">
+
+        <!-- Language -->
+        <meta http-equiv="Content-Language" content="en">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,6 +36,7 @@
         <!-- Remix Icons -->
         <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
+        <!-- Favicons -->
         <link rel="icon" type="image/png" href="{{ asset('favicon/favicon-96x96.png') }}" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}" />
         <link rel="shortcut icon" href="{{ asset('favicon/favicon.ico') }}" />
@@ -64,7 +88,7 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-image: radial-gradient(rgba(16, 185, 130, 0.4) 1.5px, transparent 1px);
+                background-image: radial-gradient(rgba(16, 185, 130, 0.4) 1px, transparent 1px);
                 background-size: 30px 30px;
                 pointer-events: none;
                 z-index: 0;
