@@ -13,6 +13,13 @@
         <!-- Remix Icons -->
         <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
+        <link rel="icon" type="image/png" href="{{ asset('favicon/favicon-96x96.png') }}" sizes="96x96" />
+        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}" />
+        <link rel="shortcut icon" href="{{ asset('favicon/favicon.ico') }}" />
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon/apple-touch-icon.png') }}" />
+        <meta name="apple-mobile-web-app-title" content="TenaMart" />
+        <link rel="manifest" href="{{ asset('favicon/site.webmanifest') }}" />
+
         <!-- Styles / Scripts -->
         @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
             @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -145,11 +152,11 @@
 
         <div class="blur-edge"></div>
         <div class="max-w-2xl w-full space-y-4 md:space-y-6 text-center content-wrapper">
-            <img src="{{ asset('storage/logo/logo-teal.svg') }}" alt="TenaMart" class="w-40 md:w-64 mx-auto mb-6 md:mb-8">
+            <img src="{{ asset('logo/logo-teal.svg') }}" alt="TenaMart" class="w-40 md:w-64 mx-auto mb-6 md:mb-8">
             
             <h1 class="text-2xl md:text-4xl font-bold text-[#10b982] mb-2 md:mb-4">Join Our Waitlist</h1>
             <p class="text-gray-600 text-sm md:text-lg mb-4 md:mb-6 max-w-md mx-auto px-2 md:px-4">
-                The future of pharmacy is coming. Join the waitlist to get early access and special offers from TenaMart.
+                The future of pharmacy is here. Join the waitlist to get early access & special offers from TenaMart.
             </p>
 
             <form action="/register" method="post" id="waitlistForm" class="max-w-md mx-auto space-y-3 md:space-y-4 px-2 md:px-4">
