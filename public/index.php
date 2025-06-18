@@ -7,8 +7,8 @@ define('LARAVEL_START', microtime(true));
 
 // Detect the base path depending on environment
 $basePath = __DIR__.'/..';
-if (file_exists(__DIR__.'/../tenamart-waitinglist/vendor/autoload.php')) {
-    $basePath = __DIR__.'/../tenamart-waitinglist';
+if (file_exists(__DIR__.'/../repositories/tenamart-waitinglist/vendor/autoload.php')) {
+    $basePath = __DIR__.'/../repositories/tenamart-waitinglist';
 }
 
 // Determine if the application is in maintenance mode...
