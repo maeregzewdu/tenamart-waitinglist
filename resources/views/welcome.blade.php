@@ -37,6 +37,7 @@
         <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
         <!-- Favicons -->
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
         <link rel="icon" type="image/png" href="{{ asset('favicon/favicon-96x96.png') }}" sizes="96x96" />
         <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/favicon.svg') }}" />
         <link rel="shortcut icon" href="{{ asset('favicon/favicon.ico') }}" />
