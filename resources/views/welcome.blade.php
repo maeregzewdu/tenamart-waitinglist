@@ -185,7 +185,7 @@
                 The future of pharmacy is here. Join the waitlist to get early access & special offers from TenaMart.
             </p>
 
-            <form action="/register" method="post" id="waitlistForm" class="max-w-md mx-auto space-y-3 md:space-y-4 px-2 md:px-4">
+            <form action="/waiting-list" method="post" id="waitlistForm" class="max-w-md mx-auto space-y-3 md:space-y-4 px-2 md:px-4">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                     <input type="text" 

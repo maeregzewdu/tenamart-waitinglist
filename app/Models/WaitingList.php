@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class WaitingList extends Model
 {
-    protected $fillable = ['name', 'email', 'phone'];
+    protected $fillable = [
+        'pharmacy', 
+        'name', 
+        'email', 
+        'phone',
+        'signup_source'
+    ];
 }

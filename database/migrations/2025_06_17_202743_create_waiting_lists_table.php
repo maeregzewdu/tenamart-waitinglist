@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('waiting_lists', function (Blueprint $table) {
             $table->id();
+            $table->string('pharmacy')->nullable();
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('phone');
+            $table->string('signup_source')->default('organic');
             $table->timestamps();
         });
     }
