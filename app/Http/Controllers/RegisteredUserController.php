@@ -5,12 +5,77 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
 
 class RegisteredUserController extends Controller
 {
     public function index()
     {
         return view('login');
+    }
+
+    public function admins()
+    {
+        $admins = User::all();
+
+        return response()->json([
+            'total_admins' => $admins->count(),
+            'admins' => $admins
+        ]);
+    }
+
+    public function update(User $user, Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'nullable',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
+        ]);
+
+        $user->update($validated);
+
+        $message = 'Information updated successfully';
+
+        if($request->wantsJson()) {
+            return response()->json([
+                'message' => $message,
+                'user' => $user->fresh()
+            ]);
+        }
+
+        return redirect()->back()->with('success', $message);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($validated['current_password'], $user->password)) {
+            return back()->withErrors([
+                'current_password' => 'The current password is incorrect.'
+            ]);
+        }
+
+        $user->update([
+            'password' => Hash::make($validated['new_password'])
+        ]);
+
+        $message = 'Password updated successfully.';
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => $message]);
+        }
+
+        return redirect()->back()->with('success', $message);
     }
 
     public function createAdmin(Request $request)

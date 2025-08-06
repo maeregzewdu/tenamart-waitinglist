@@ -15,17 +15,20 @@ Route::post('/waiting-list', [WaitingListController::class, 'store']);
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/create-admin', [RegisteredUserController::class, 'createAdmin']);
+    Route::get('/admins', [RegisteredUserController::class, 'admins']);
     Route::post('/logout', [RegisteredUserController::class, 'logout'])->name('logout');
     Route::post('/delete-account', [RegisteredUserController::class, 'deleteAccount'])->name('delete-account');
     
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
-    Route::get('/waiting-list', [DashboardController::class, 'index']);
+    Route::get('/waiting-list', [DashboardController::class, 'waitingList']);
     Route::get('/waiting-list/stats', [DashboardController::class, 'stats']);
 
     Route::get('/waiting-list/export', [WaitingListController::class, 'export']);
 
-    Route::get('/waiting-list/{waitingList}', [DashboardController::class, 'show']);
+    Route::get('/waiting-list/{waitingList}', [WaitingListController::class, 'show']);
     Route::put('/waiting-list/{waitingList}', [DashboardController::class, 'update']);
     Route::delete('/waiting-list/{waitingList}', [DashboardController::class, 'destroy']);
-    
+
+    Route::post('/waiting-list/{waitingList}/edit', [WaitingListController::class, 'update']);
+    Route::post('/waiting-list/{waitingList}/delete', [WaitingListController::class, 'delete']);
 });

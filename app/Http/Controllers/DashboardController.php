@@ -6,25 +6,44 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\WaitingList;
+use App\Models\User;
 use App\Exports\WaitingListExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
-    public function dashboard()
+    public function dashboard(Request $request)
     {
-        return view('dashboard');
+        $totalWaitingList = WaitingList::count();
+        $totalAdmin = User::count();
+        $topSource = DB::table('waiting_lists')
+        ->select('signup_source', DB::raw('COUNT(*) as count'))
+        ->groupBy('signup_source')
+        ->orderByDesc('count')
+        ->first();
+        $recentActivity = WaitingList::orderBy('created_at', 'desc')->limit(5)->get();
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'total_waiting_list' => $totalWaitingList,
+                'total_admin' => $totalAdmin,
+                'top_source' => $topSource,
+                'recent_activity' => $recentActivity,
+            ]);
+        }
+
+        return view('dashboard', compact('total_waiting_list', 'total_admin', 'top_source', 'recent_activity'));
     }
 
     public function index()
     {
         $waitingList = WaitingList::orderBy('created_at', 'desc')->paginate(10);
-        return response()->json($waitingList);
-    }
+        $total = WaitingList::count();
 
-    public function show(WaitingList $waitingList)
-    {
-        return response()->json($waitingList);
+        return response()->json([
+            'waiting_list' => $waitingList,
+            'total' => $total
+        ]);
     }
 
     public function update(Request $request, WaitingList $waitingList)
@@ -134,11 +153,14 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        $topSource = (clone $baseQuery)
+            ->select('signup_source', DB::raw('COUNT(*) as total'))
+            ->groupBy('signup_source')
+            ->orderByDesc('total')
+            ->limit(1)
+            ->first();
+
         $perPage = $request->query('per_page', 10);
-        $waitingListData = $baseQuery
-            ->orderBy('created_at', 'desc')
-            ->paginate($perPage)
-            ->appends($request->query());
 
         return response()->json([
             'filters' => [
@@ -150,12 +172,10 @@ class DashboardController extends Controller
             'stats' => [
                 'total' => $total,
                 'today' => $today,
-                'this_week' => $thisWeek,
+                'top_source' => $topSource,
             ],
             'trend' => $trend,
             'top_sources' => $topSources,
-            'waiting_list' => $waitingListData,
         ]);
     }
-
 }

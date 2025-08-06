@@ -25,6 +25,7 @@ class WaitingListRequest extends FormRequest
             'name'  => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:20',
+            'signup_source' => 'nullable|string'
         ];
     }
 }
