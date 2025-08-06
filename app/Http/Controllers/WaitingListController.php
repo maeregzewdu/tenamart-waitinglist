@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\WaitingList;
 use App\Http\Requests\WaitingListRequest;
+use App\Exports\WaitingListExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class WaitingListController extends Controller
 {
@@ -35,5 +37,10 @@ class WaitingListController extends Controller
         }
 
         return redirect()->back()->with('success', $message);
+    }
+
+    public function export()
+    {
+        return Excel::download(new WaitingListExport, 'waiting-list-' . now()->format('Y-m-d') . '.xlsx');
     }
 }

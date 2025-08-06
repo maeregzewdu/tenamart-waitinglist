@@ -67,4 +67,16 @@ class RegisteredUserController extends Controller
 
         return redirect('/login');
     }
+
+    public function deleteAccount(Request $request)
+    {
+        $user = Auth::user();
+        $user->delete();
+
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'Account deleted successfully']);
+        }
+
+        return redirect('/login')->with('success', 'Account deleted successfully');
+    }
 }
