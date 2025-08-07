@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\WaitingList;
 use App\Models\User;
 use App\Exports\WaitingListExport;
-use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
@@ -32,7 +31,7 @@ class DashboardController extends Controller
             ]);
         }
 
-        return view('dashboard', compact('total_waiting_list', 'total_admin', 'top_source', 'recent_activity'));
+        return view('dashboard', compact('totalWaitingList', 'totalAdmin', 'topSource', 'recentActivity'));
     }
 
     public function index()
