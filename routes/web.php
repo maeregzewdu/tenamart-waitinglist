@@ -17,8 +17,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/create-admin', [RegisteredUserController::class, 'createAdmin']);
     Route::get('/admins', [RegisteredUserController::class, 'admins']);
     Route::post('/logout', [RegisteredUserController::class, 'logout'])->name('logout');
-    Route::post('/delete-account', [RegisteredUserController::class, 'deleteAccount'])->name('delete-account');
-    
+    Route::delete('/delete-account', [RegisteredUserController::class, 'deleteAccount'])->name('delete-account');
+    Route::get('/current-user', [RegisteredUserController::class, 'currentUser']);
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
     Route::get('/waiting-list', [DashboardController::class, 'waitingList']);
     Route::get('/waiting-list/stats', [DashboardController::class, 'stats']);
