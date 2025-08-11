@@ -144,4 +144,11 @@ class RegisteredUserController extends Controller
 
         return redirect('/login')->with('success', 'Account deleted successfully');
     }
+
+    public function currentUser()
+    {
+        $user = auth()->user();
+
+        return response()->json($user);
+    }
 }

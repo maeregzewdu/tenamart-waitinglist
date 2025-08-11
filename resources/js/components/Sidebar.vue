@@ -1,117 +1,217 @@
 <template>
-  <aside style="position: absolute; width: 240px; height: 800px; left: 0px; top: 0px; background: #FFFFFF; border: 1px solid #E5E5E5;">
-    <!-- Logo -->
-    <div style="position: absolute; width: 150px; height: 31px; left: 20px; top: 20px;">
-      <!-- Logo SVG would go here -->
-      <div style="position: absolute; left: 0%; right: 77.46%; top: 0%; bottom: 0%; background: #10B982;"></div>
-    </div>
+    <aside class="sidebar">
+        <!-- Logo Section -->
+        <div class="logo-section">
+            <img src="../public/logo-teal.png" alt="Logo" class="logo">
+        </div>
 
-    <!-- Navigation Menu -->
-    <nav>
-      <ul>
-        <sidebar-item 
-          to="/general" 
-          icon="dashboard-line" 
-          text="General"
-          :active="true"
-          style="position: absolute; width: 200px; height: 48px; left: 20px; top: 95px; background: #F0F0F0; border-radius: 5px;"
-          icon-style="left: 12.5%; right: 12.5%; top: 12.5%; bottom: 12.5%; background: #10B982;"
-          text-style="left: 69px; top: 112px; width: 44px;"
-        />
-        <sidebar-item 
-          to="/statistics" 
-          icon="bar-chart-line" 
-          text="Statistics"
-          style="position: absolute; width: 200px; height: 48px; left: 20px; top: 163px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 12.5%; right: 12.5%; top: 8.33%; bottom: 12.5%; background: #10B982;"
-          text-style="left: 69px; top: 180px; width: 50px;"
-        />
-        <sidebar-item 
-          to="/waiting-list" 
-          icon="list-check" 
-          text="Waiting list"
-          style="position: absolute; width: 200px; height: 48px; left: 20px; top: 231px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 8.33%; right: 8.33%; top: 8.33%; bottom: 8.33%; background: #10B982;"
-          text-style="left: 69px; top: 248px; width: 61px;"
-        />
-        <sidebar-item 
-          to="/admins" 
-          icon="user-settings-line" 
-          text="Admins"
-          style="position: absolute; width: 200px; height: 48px; left: 20px; top: 299px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 16.67%; right: 8.33%; top: 4.17%; bottom: 8.33%; background: #10B982;"
-          text-style="left: 69px; top: 316px; width: 42px;"
-        />
-        <sidebar-item 
-          to="/profile-settings" 
-          icon="settings-3-line" 
-          text="Profile settings"
-          style="position: absolute; width: 200px; height: 48px; left: 20px; top: 367px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 16.67%; right: 6.68%; top: 4.17%; bottom: 6.25%; background: #10B982;"
-          text-style="left: 69px; top: 384px; width: 82px;"
-        />
-      </ul>
+        <!-- Main Navigation -->
+        <nav class="main-nav">
+            <ul>
+                <sidebar-item icon="ri-dashboard-line" title="General" :active="activeSection === 'general'" @click="toggleSection('general')"></sidebar-item>
+                <sidebar-item icon="ri-bar-chart-line" title="Statistics" :active="activeSection === 'statistics'" @click="toggleSection('statistics')"></sidebar-item>
+                <sidebar-item icon="ri-list-check" title="Waiting list" :active="activeSection === 'waitingList'" @click="toggleSection('waitingList')"></sidebar-item>
+                <sidebar-item icon="ri-user-settings-line" title="Admins" :active="activeSection === 'admins'" @click="toggleSection('admins')"></sidebar-item>
+                <sidebar-item icon="ri-settings-3-line" title="Profile Settings" :active="activeSection === 'profileSettings'" @click="toggleSection('profileSettings')"></sidebar-item>
+            </ul>
+        </nav>
 
-      <!-- User Menu -->
-      <div style="position: absolute; width: 200px; height: 202px; left: 20px; top: 486px; background: #FFFFFF; border: 1px solid #E5E5E5; border-radius: 5px;">
-        <sidebar-item 
-          to="/profile-settings" 
-          icon="user-settings-line" 
-          text="Profile Settings"
-          style="position: absolute; width: 172px; height: 48px; left: 34px; top: 500px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 16.67%; right: 6.68%; top: 4.17%; bottom: 6.25%; background: #10B982;"
-          text-style="left: 83px; top: 517px; width: 84px; color: #000000;"
-        />
-        <div style="position: absolute; width: 172px; height: 0px; left: 34px; top: 558px; border: 1px solid #F0F0F0;"></div>
-        <sidebar-item 
-          to="/logout" 
-          icon="logout-box-r-line" 
-          text="Log out"
-          style="position: absolute; width: 172px; height: 48px; left: 34px; top: 568px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 16.67%; right: 4.17%; top: 8.33%; bottom: 8.33%; background: #E32F2F;"
-          text-style="left: 83px; top: 585px; width: 43px; color: #E32F2F;"
-        />
-        <sidebar-item 
-          to="/delete-account" 
-          icon="delete-bin-line" 
-          text="Delete account"
-          style="position: absolute; width: 172px; height: 48px; left: 34px; top: 626px; background: #FFFFFF; border-radius: 5px;"
-          icon-style="left: 8.33%; right: 8.33%; top: 8.33%; bottom: 8.33%; background: #E32F2F;"
-          text-style="left: 83px; top: 643px; width: 85px; color: #E32F2F;"
-        />
-      </div>
-    </nav>
-
-    <!-- User Profile -->
-    <div style="position: absolute; width: 200px; height: 72px; left: 20px; top: 708px; background: #F0F0F0; border-radius: 5px;">
-      <div style="position: absolute; width: 40px; height: 40px; left: 36px; top: 724px; background: #10B982; border-radius: 20px;">
-        <span style="position: absolute; width: 10px; height: 19px; left: 15px; top: 10px; font-family: 'Raleway'; font-weight: 700; font-size: 16px; line-height: 19px; color: #FFFFFF;">S</span>
-      </div>
-      <div style="position: absolute; width: 75px; height: 16px; left: 86px; top: 727px; font-family: 'Raleway'; font-weight: 500; font-size: 14px; line-height: 16px; color: #000000;">Saron Yirga</div>
-      <div style="position: absolute; width: 84px; height: 14px; left: 86px; top: 746px; font-family: 'Raleway'; font-weight: 500; font-size: 12px; line-height: 14px; color: #000000;">saronyirga@g...</div>
-      <div style="position: absolute; width: 20px; height: 20px; left: 180px; top: 734px;">
-        <div style="position: absolute; left: 24.14%; right: 24.14%; top: 11.82%; bottom: 11.82%; background: #505050;"></div>
-      </div>
-    </div>
-  </aside>
+        <!-- User Profile Section -->
+        <div class="user-profile" @click="toggleProfileMenu">
+            <div class="avatar">{{ userInitial }}</div>
+            <div class="user-info">
+                <div class="username">{{ userName }}</div>
+                <div class="email">{{ userEmail }}</div>
+            </div>
+            <div class="profile-toggle">
+                <i class="ri-arrow-up-s-line" v-if="showProfileMenu"></i>
+                <i class="ri-arrow-down-s-line" v-else></i>
+            </div>
+            
+            <!-- Profile Dropdown Menu -->
+            <div class="profile-menu" v-if="showProfileMenu">
+                <div class="menu-item" @click="toggleSection('profileSettings')">
+                    <i class="ri-settings-3-line"></i>
+                    <span>Profile Settings</span>
+                </div>
+                <div class="menu-item" @click="handleLogout">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span>Log out</span>
+                </div>
+                <div class="menu-item" @click="handleDeleteAccount">
+                    <i class="ri-delete-bin-line"></i>
+                    <span>Delete account</span>
+                </div>
+            </div>
+        </div>
+    </aside>
 </template>
 
 <script>
 import SidebarItem from './SidebarItem.vue';
 
 export default {
-  name: 'Sidebar',
-  components: {
-    SidebarItem
-  }
-}
+    components: {
+        SidebarItem,
+    },
+    props: {
+        activeSection: {
+            type: String,
+            default: 'general'
+        },
+        userName: {
+            type: String,
+            default: 'Saron Yirga'
+        },
+        userEmail: {
+            type: String,
+            default: 'saronyirga@g...'
+        }
+    },
+    data() {
+        return {
+            showProfileMenu: false
+        };
+    },
+    computed: {
+        userInitial() {
+            return this.userName.charAt(0).toUpperCase();
+        }
+    },
+    methods: {
+        toggleSection(section) {
+            this.$emit('toggle-section', section);
+            this.showProfileMenu = false;
+        },
+        toggleProfileMenu() {
+            this.showProfileMenu = !this.showProfileMenu;
+        },
+        handleLogout() {
+            this.$emit('logout');
+        },
+        handleDeleteAccount() {
+            this.$emit('delete-account');
+        }
+    },
+};
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');
-@import url('https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css');
+<style scoped>
+.sidebar {
+    position: absolute;
+    width: 240px;
+    height: 800px;
+    background: #FFFFFF;
+    border-right: 1px solid #E5E5E5;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
 
-body {
-  font-family: 'Raleway', sans-serif;
+.logo-section {
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px solid #E5E5E5;
+    margin-bottom: 20px;
+}
+
+.logo {
+    height: 40px;
+}
+
+.main-nav {
+    padding: 0 10px;
+    flex-grow: 1;
+}
+
+.user-profile {
+    position: relative;
+    width: 200px;
+    height: 72px;
+    background: #F0F0F0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    margin: 0 20px 20px;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: #10B982;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+    font-family: 'Raleway';
+    font-size: 16px;
+}
+
+.user-info {
+    flex-grow: 1;
+}
+
+.username {
+    font-family: 'Raleway';
+    font-weight: 500;
+    font-size: 14px;
+    color: #000000;
+}
+
+.email {
+    font-family: 'Raleway';
+    font-weight: 500;
+    font-size: 12px;
+    color: #000000;
+}
+
+.profile-toggle {
+    width: 20px;
+    height: 20px;
+    position: relative;
+}
+
+.profile-toggle i {
+    position: absolute;
+    color: #505050;
+    font-size: 20px;
+}
+
+.profile-menu {
+    position: absolute;
+    bottom: 80px;
+    left: 0;
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 10;
+}
+
+.menu-item {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    font-family: 'Raleway';
+    font-size: 14px;
+    color: #000000;
+    transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+    background: #F0F0F0;
+}
+
+.menu-item i {
+    margin-right: 10px;
+    font-size: 16px;
+    color: #505050;
 }
 </style>

@@ -6,7 +6,7 @@ import SidebarItem from './components/SidebarItem.vue';
 import Dashboard from './components/Dashboard.vue';
 
 // Initialize Vue app
-const app = createApp({});
+const app = createApp(Dashboard);
 
 // Configure router
 const router = createRouter({
