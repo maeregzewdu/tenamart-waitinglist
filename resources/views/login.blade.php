@@ -24,6 +24,7 @@
                             class="w-full pl-12 pr-4 py-4 bg-white/50 border border-teal-200 rounded-xl text-[#10b982] placeholder-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
                             required
                         >
+                        
                     </div>
 
                     <!-- Password field -->
@@ -39,7 +40,13 @@
                             required
                         >
                     </div>
-
+                    @error('email')
+                        <p class="text-red-500">{{ $message }}</p>
+                    @enderror
+                    @error('password')
+                        <p class="text-red-500">{{ $message }}</p>
+                    @enderror
+                    
                     <!-- Submit button -->
                     <button 
                         type="submit"
