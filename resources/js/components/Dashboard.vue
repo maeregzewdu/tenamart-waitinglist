@@ -32,13 +32,36 @@
           <span>Profile Settings</span>
         </div>
         <div class="menu-divider"></div>
-        <div class="menu-item danger" @click="confirmLogout">
+        <div class="menu-item danger" @click="showLogoutConfirmation">
           <i class="ri-logout-box-r-line"></i>
           <span>Log out</span>
         </div>
-        <div class="menu-item danger" @click="confirmDeleteAccount">
+        <div class="menu-item danger" @click="showDeleteConfirmation">
           <i class="ri-delete-bin-line"></i>
           <span>Delete account</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>{{ modalTitle }}</h3>
+          <i class="ri-close-line" @click="closeModal"></i>
+        </div>
+        <div class="modal-body">
+          <p>{{ modalMessage }}</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="closeModal">Cancel</button>
+          <button 
+            class="btn-confirm" 
+            :class="{ 'danger': isDangerAction }"
+            @click="confirmAction"
+          >
+            {{ confirmButtonText }}
+          </button>
         </div>
       </div>
     </div>
@@ -52,6 +75,7 @@ import Statistics from './Statistics.vue'
 import WaitingList from './WaitingList.vue'
 import Admins from './Admins.vue'
 import ProfileSettings from './ProfileSettings.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -67,9 +91,15 @@ export default {
       activeSection: 'general',
       userMenuOpen: false,
       user: {
-        name: 'Saron Yirga',
-        email: 'saronyirga@g...'
-      }
+        name: '',
+        email: ''
+      },
+      showModal: false,
+      modalTitle: '',
+      modalMessage: '',
+      confirmButtonText: 'Confirm',
+      isDangerAction: false,
+      pendingAction: null
     }
   },
   computed: {
@@ -77,13 +107,30 @@ export default {
       return this.user.name ? this.user.name.charAt(0).toUpperCase() : ''
     },
     userName() {
-      return this.user.name || 'User Name'
+      return this.user.name || 'Loading...'
     },
     userEmail() {
-      return this.user.email || 'user@example.com'
+      return this.user.email || 'Loading...'
     }
   },
+  mounted() {
+    this.fetchCurrentUser()
+  },
   methods: {
+    async fetchCurrentUser() {
+      try {
+        const response = await axios.get('/current-user')
+        this.user = {
+          name: response.data.name,
+          email: response.data.email
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
+        if (error.response && error.response.status === 401) {
+          window.location.href = '/login'
+        }
+      }
+    },
     setActiveSection(section) {
       this.activeSection = section
       this.userMenuOpen = false
@@ -91,14 +138,59 @@ export default {
     toggleUserMenu() {
       this.userMenuOpen = !this.userMenuOpen
     },
-    confirmLogout() {
-      if (confirm('Are you sure you want to log out?')) {
-        this.$emit('logout')
+    showLogoutConfirmation() {
+      this.modalTitle = 'Confirm Logout'
+      this.modalMessage = 'Are you sure you want to log out?'
+      this.confirmButtonText = 'Log out'
+      this.isDangerAction = false
+      this.pendingAction = this.performLogout
+      this.showModal = true
+      this.userMenuOpen = false
+    },
+    showDeleteConfirmation() {
+      this.modalTitle = 'Delete Account'
+      this.modalMessage = 'WARNING: This will permanently delete your account and all associated data. This action cannot be undone.'
+      this.confirmButtonText = 'Delete'
+      this.isDangerAction = true
+      this.pendingAction = this.performDeleteAccount
+      this.showModal = true
+      this.userMenuOpen = false
+    },
+    showError(message) {
+      this.modalTitle = 'Error'
+      this.modalMessage = message
+      this.confirmButtonText = 'OK'
+      this.isDangerAction = true
+      this.pendingAction = null
+      this.showModal = true
+    },
+    closeModal() {
+      this.showModal = false
+      this.pendingAction = null
+    },
+    confirmAction() {
+      if (this.pendingAction) {
+        this.pendingAction()
+      } else {
+        this.closeModal()
       }
     },
-    confirmDeleteAccount() {
-      if (confirm('WARNING: This will permanently delete your account. Are you sure?')) {
-        this.$emit('delete-account')
+    async performLogout() {
+      try {
+        await axios.post('/logout')
+        window.location.href = '/login'
+      } catch (error) {
+        console.error('Logout failed:', error)
+        this.showError('Logout failed. Please try again.')
+      }
+    },
+    async performDeleteAccount() {
+      try {
+        await axios.delete('/delete-account')
+        window.location.href = '/login'
+      } catch (error) {
+        console.error('Account deletion failed:', error)
+        this.showError('Account deletion failed. Please try again.')
       }
     }
   }
@@ -126,8 +218,8 @@ export default {
 .user-profile {
   position: absolute;
   bottom: 20px;
-  left: 20px;
-  width: 200px;
+  left: 10px;
+  width: 220px;
   z-index: 100;
 }
 
@@ -156,28 +248,36 @@ export default {
   color: white;
   font-weight: bold;
   font-size: 16px;
-  margin-right: 10px;
+  margin-right: 12px;
 }
 
 .profile-details {
   flex-grow: 1;
+  min-width: 0;
 }
 
 .username {
   font-weight: 500;
   font-size: 14px;
   color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .email {
   font-weight: 500;
   font-size: 12px;
   color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .toggle-menu {
   display: flex;
   flex-direction: column;
+  margin-left: 8px;
 }
 
 .toggle-menu i {
@@ -241,5 +341,115 @@ export default {
   height: 1px;
   background: #E5E5E5;
   margin: 4px 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: white;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #E5E5E5;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-header i {
+  font-size: 20px;
+  color: #777;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-header i:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body p {
+  margin: 0;
+  color: #555;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  border-top: 1px solid #E5E5E5;
+  gap: 10px;
+}
+
+.btn-cancel, .btn-confirm {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cancel {
+  background: #F0F0F0;
+  color: #333;
+  border: none;
+}
+
+.btn-cancel:hover {
+  background: #E5E5E5;
+}
+
+.btn-confirm {
+  background: #10B982;
+  color: white;
+  border: none;
+}
+
+.btn-confirm.danger {
+  background: #EF4444;
+}
+
+.btn-confirm:hover {
+  opacity: 0.9;
 }
 </style>
