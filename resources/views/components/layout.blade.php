@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>TenaMart – Join the Waitlist for Ethiopia’s New Pharmacy Marketplace</title>
+        <title>TenaMart – Join the Waitlist for Ethiopia's New Pharmacy Marketplace</title>
         <meta name="description" content="TenaMart is a new online pharmacy marketplace for Ethiopia. Join the waitlist to get early access and special offers.">
         <meta name="robots" content="index, follow">
         <meta name="keywords" content="TenaMart, Tena Mart, Ethiopia pharmacy, online medicine, pharmacy marketplace, digital health, online pharmacy, waitlist, early access, healthcare, medicine delivery">
@@ -15,7 +15,7 @@
         <!-- Open Graph (Facebook, LinkedIn) -->
         <meta property="og:type" content="website">
         <meta property="og:title" content="TenaMart – Join the Waitlist">
-        <meta property="og:description" content="Get early access to Ethiopia’s first pharmacy marketplace.">
+        <meta property="og:description" content="Get early access to Ethiopia's first pharmacy marketplace.">
         <meta property="og:image" content="{{ asset('favicon/og-image.png') }}">
         <meta property="og:url" content="https://tenamart.et/">
         <meta property="og:site_name" content="TenaMart">
@@ -23,7 +23,7 @@
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="TenaMart – Join the Waitlist">
-        <meta name="twitter:description" content="Be the first to access TenaMart — Ethiopia’s digital pharmacy platform.">
+        <meta name="twitter:description" content="Be the first to access TenaMart — Ethiopia's digital pharmacy platform.">
         <meta name="twitter:image" content="{{ asset('favicon/og-image.png') }}">
 
         <!-- Language -->
@@ -52,6 +52,21 @@
         @endif
 
         <style>
+            html, body {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+                background-color: #FFFFFF;
+            }
+
+            #app {
+                min-height: 100vh;
+                width: 100%;
+                position: relative;
+            }
+
             .blur-edge {
                 position: fixed;
                 width: 100vw;
@@ -80,6 +95,8 @@
             .content-wrapper {
                 position: relative;
                 z-index: 1;
+                min-height: 100vh;
+                width: 100%;
             }
 
             /* Dot pattern background */
@@ -143,6 +160,9 @@
         </style>
     </head>
     
-    {{ $slot }}
-
+    <body class="font-sans antialiased h-full w-full">
+        <div id="app" class="min-h-full w-full">
+            {{ $slot }}
+        </div>
+    </body>
 </html>

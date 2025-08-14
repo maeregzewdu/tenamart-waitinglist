@@ -1,11 +1,13 @@
 <template>
-  <div class="dashboard">
+  <div class="dashboard h-full w-full flex">
+    <!-- Sidebar -->
     <sidebar 
       :active-section="activeSection" 
       @toggle-section="setActiveSection"
     ></sidebar>
     
-    <div class="main-content">
+    <!-- Main Content -->
+    <div class="main-content flex-1">
       <general v-if="activeSection === 'general'"></general>
       <statistics v-if="activeSection === 'statistics'"></statistics>
       <waiting-list v-if="activeSection === 'waitingList'"></waiting-list>
@@ -199,25 +201,21 @@ export default {
 
 <style scoped>
 .dashboard {
-  display: flex;
   position: relative;
-  width: 1280px;
-  height: 800px;
   background: #FFFFFF;
-  overflow: hidden;
-  font-family: 'Raleway', sans-serif;
+  overflow: hidden; /* Added to prevent any scrolling */
 }
 
 .main-content {
   margin-left: 240px;
+  height: 100vh;
   padding: 20px;
-  width: calc(100% - 240px);
-  height: 100%;
+  overflow: hidden; /* Changed from overflow-y: auto */
 }
 
 .user-profile {
-  position: absolute;
-  bottom: 20px;
+  position: fixed;
+  bottom: 10px;
   left: 10px;
   width: 220px;
   z-index: 100;
@@ -451,5 +449,14 @@ export default {
 
 .btn-confirm:hover {
   opacity: 0.9;
+}
+
+/* Global scrollbar removal */
+::-webkit-scrollbar {
+  display: none;
+}
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 </style>

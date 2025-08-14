@@ -61,14 +61,17 @@ export default {
 
 <style scoped>
 .sidebar {
-  position: absolute;
+  position: fixed;
   width: 240px;
-  height: 800px;
+  height: 100vh;
   background: #FFFFFF;
   border-right: 1px solid #E5E5E5;
   display: flex;
   flex-direction: column;
   padding-top: 20px;
+  left: 0;
+  top: 0;
+  z-index: 50;
 }
 
 .logo-section {
@@ -86,6 +89,7 @@ export default {
 .main-nav {
   padding: 0 10px;
   flex-grow: 1;
+  overflow-y: auto;
 }
 
 .main-nav ul {
