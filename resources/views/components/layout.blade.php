@@ -96,6 +96,10 @@
                 z-index: 0;
             }
 
+            body {
+                font-family: 'Raleway', sans-serif;
+            }
+
             /* Decorative elements */
             .decorative-elements {
                 position: fixed;
