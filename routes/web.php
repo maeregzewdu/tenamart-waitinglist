@@ -22,6 +22,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
     Route::get('/waiting-list', [DashboardController::class, 'waitingList']);
     Route::get('/waiting-list/stats', [DashboardController::class, 'stats']);
+    Route::get('/stats/pdf', [DashboardController::class, 'exportStatsPdf']);//added route for simple view 
+
 
     Route::get('/waiting-list/export', [WaitingListController::class, 'export']);
 
