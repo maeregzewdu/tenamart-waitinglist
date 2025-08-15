@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="flex relative w-full  overflow-hidden">
     <sidebar 
       :active-section="activeSection" 
       @toggle-section="setActiveSection"
@@ -198,15 +198,7 @@ export default {
 </script>
 
 <style scoped>
-.dashboard {
-  display: flex;
-  position: relative;
-  width: 1280px;
-  height: 800px;
-  background: #FFFFFF;
-  overflow: hidden;
-  font-family: 'Raleway', sans-serif;
-}
+
 
 .main-content {
   margin-left: 240px;

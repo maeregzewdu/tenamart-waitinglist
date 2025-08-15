@@ -1,8 +1,13 @@
+<script setup>
+  import SidebarItem from './SidebarItem.vue'
+  import logo from '@images/logo-teal.png'
+</script>
+
 <template>
   <aside class="sidebar">
     <!-- Logo Section -->
     <div class="logo-section">
-      <img src="./logo/logo-teal.png" alt="TENAMART" class="logo">
+      <img :src="logo" alt="TENAMART" class="logo">
     </div>
 
     <!-- Main Navigation -->
@@ -44,8 +49,6 @@
 </template>
 
 <script>
-import SidebarItem from './SidebarItem.vue'
-
 export default {
   components: {
     SidebarItem
@@ -63,7 +66,7 @@ export default {
 .sidebar {
   position: absolute;
   width: 240px;
-  height: 800px;
+  height: 100vh;
   background: #FFFFFF;
   border-right: 1px solid #E5E5E5;
   display: flex;
