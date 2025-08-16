@@ -11,6 +11,7 @@ class WaitingList extends Model
         'name', 
         'email', 
         'phone',
-        'signup_source'
+        'signup_source',
+        'utm_source','utm_medium','utm_campaign','utm_term','utm_content',
     ];
 }
