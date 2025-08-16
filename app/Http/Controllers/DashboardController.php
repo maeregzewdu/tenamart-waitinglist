@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Elibyy\TCPDF\Facades\TCPDF; 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -176,5 +176,16 @@ class DashboardController extends Controller
             'trend' => $trend,
             'top_sources' => $topSources,
         ]);
+    }
+    public function exportStatsPdf(Request $request)
+    {
+        $stats = $this->stats($request)->getData(true); 
+    
+        $pdf = new TCPDF;
+        $pdf::SetTitle('Statistics Report');
+        $pdf::AddPage();
+        $html = view('stats_pdf', compact('stats'))->render();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::Output('statistics.pdf');
     }
 }
