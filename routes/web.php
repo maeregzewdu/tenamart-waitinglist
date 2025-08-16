@@ -20,8 +20,11 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/delete-account', [RegisteredUserController::class, 'deleteAccount'])->name('delete-account');
     Route::get('/current-user', [RegisteredUserController::class, 'currentUser']);
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
-    Route::get('/waiting-list', [DashboardController::class, 'waitingList']);
+    Route::get('/waiting-list', [DashboardController::class, 'index']);
     Route::get('/waiting-list/stats', [DashboardController::class, 'stats']);
+
+    Route::put('/current-user', [RegisteredUserController::class, 'update']);
+    Route::put('/current-user/password', [RegisteredUserController::class, 'updatePassword']);
 
     Route::get('/waiting-list/export', [WaitingListController::class, 'export']);
 

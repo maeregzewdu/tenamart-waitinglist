@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use App\Models\User;
-
 
 class RegisteredUserController extends Controller
 {
@@ -25,29 +25,25 @@ class RegisteredUserController extends Controller
         ]);
     }
 
-    public function update(User $user, Request $request)
+    public function update(Request $request)
     {
+        $user = Auth::user();
+        
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'nullable',
+                'required',
                 'email',
-                Rule::unique('users', 'email')->ignore($user->id),
+                Rule::unique('users')->ignore($user->id),
             ],
         ]);
 
         $user->update($validated);
 
-        $message = 'Information updated successfully';
-
-        if($request->wantsJson()) {
-            return response()->json([
-                'message' => $message,
-                'user' => $user->fresh()
-            ]);
-        }
-
-        return redirect()->back()->with('success', $message);
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user->fresh()
+        ]);
     }
 
     public function updatePassword(Request $request)
@@ -60,22 +56,18 @@ class RegisteredUserController extends Controller
         $user = Auth::user();
 
         if (!Hash::check($validated['current_password'], $user->password)) {
-            return back()->withErrors([
-                'current_password' => 'The current password is incorrect.'
-            ]);
+            return response()->json([
+                'message' => 'The current password is incorrect.'
+            ], 422);
         }
 
         $user->update([
             'password' => Hash::make($validated['new_password'])
         ]);
 
-        $message = 'Password updated successfully.';
-
-        if ($request->wantsJson()) {
-            return response()->json(['message' => $message]);
-        }
-
-        return redirect()->back()->with('success', $message);
+        return response()->json([
+            'message' => 'Password updated successfully'
+        ]);
     }
 
     public function createAdmin(Request $request)
@@ -92,14 +84,10 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'message' => 'Admin created successfully!',
-                'user' => $user
-            ]);
-        }
-
-        return redirect()->back()->with('success', 'User created successfully!');
+        return response()->json([
+            'message' => 'Admin created successfully!',
+            'user' => $user
+        ]);
     }
 
     public function login(Request $request)
@@ -112,16 +100,14 @@ class RegisteredUserController extends Controller
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
 
-            if ($request->wantsJson()) {
-                return response()->json(['message' => 'Login successful']);
-            }
-
-            return redirect()->intended('/dashboard');
+            return response()->json([
+                'message' => 'Login successful'
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        return response()->json([
+            'message' => 'The provided credentials do not match our records.'
+        ], 401);
     }
 
     public function logout(Request $request)
@@ -130,7 +116,9 @@ class RegisteredUserController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
 
     public function deleteAccount(Request $request)
@@ -138,16 +126,14 @@ class RegisteredUserController extends Controller
         $user = Auth::user();
         $user->delete();
 
-        if ($request->wantsJson()) {
-            return response()->json(['message' => 'Account deleted successfully']);
-        }
-
-        return redirect('/login')->with('success', 'Account deleted successfully');
+        return response()->json([
+            'message' => 'Account deleted successfully'
+        ]);
     }
 
     public function currentUser()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         return response()->json($user);
     }
