@@ -209,7 +209,7 @@ export default {
 
 .user-profile {
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   left: 10px;
   width: 220px;
   z-index: 100;
