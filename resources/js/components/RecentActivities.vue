@@ -1,7 +1,5 @@
 <template>
-    <div
-        class="bg-white w-[652px] h-[538px] rounded-[10px] border border-[#E5E5E5] mb-8"
-    >
+    <div class="bg-white h-[450px] rounded-[10px] border border-[#E5E5E5] mb-8">
         <!-- Header -->
 
         <div class="relative flex items-center space-x-3 ml-[20px]">
@@ -18,7 +16,7 @@
             <div class="flex flex-col flex-1 relative">
                 <!-- Last Seen (top right) -->
                 <span
-                    class="absolute right-0 -top-4 text-xs text-gray-400 mt-[20px] mr-[20px]"
+                    class="absolute right-0 -top-4 text-xs text-gray-400 mt-[25px] mr-[20px]"
                 >
                     Last 24 hrs
                 </span>
@@ -33,7 +31,7 @@
         </div>
 
         <!-- Divider -->
-        <hr class="my-5 border border-[#E5E5E5]" />
+        <hr class="my-5 border border-[#E5E5E5] ml-[20px] mr-[20px]" />
 
         <!-- Activity List -->
         <ul class="mt-2 space-y-3">
@@ -42,7 +40,7 @@
                 :key="index"
                 class="flex items-start"
             >
-                <div class="flex-shrink-0 ml-[20px]">
+                <div class="flex-shrink-0 ml-[36px]">
                     <div :class="`p-2 rounded-md ${activity.iconBgColor}`">
                         <component
                             :is="activity.icon"

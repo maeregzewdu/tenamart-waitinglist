@@ -41,14 +41,14 @@
 
         <!-- Create Wait List -->
         <div
-            @click="showAdminModal = true"
+            @click="showWaitModal = true"
             class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-50 transition"
         >
             <!-- Square 24x24 icon button -->
             <div
                 class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
             >
-                <i class="ri-add-line text-white text-[14px]"></i>
+                <i class="ri-admin-line text-white text-[14px]"></i>
             </div>
             <div>
                 <h3 class="text-sm font-medium text-gray-900">
@@ -98,6 +98,11 @@
 
         <!-- Admin Modal "-->
         <!-- You can use v-if="showAdminModal exactly right below here <Admin modal -->
+        <CreateWaitModal
+            :show="showWaitModal"
+            @close="showWaitModal = false"
+            @created="handleAdminCreated"
+        />
 
         <AdminModal
             :show="showAdminModal"
@@ -120,9 +125,19 @@ import AdminModal from "@/components/AdminModal.vue";
 import { exportToCSV } from "@/utils/exportUtils";
 import { useUsers } from "@/composables/useUsers";
 import { useToast } from "vue-toastification";
+
+import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path
+
+const showWaitModal = ref(false);
+const waitListUsers = ref([]); // Array to store new wait list users
+
+const addNewWaitUser = (user) => {
+    waitListUsers.value.push(user);
+};
 const authStore = useAuthStore();
 const { filteredUsers } = useUsers();
 const showAdminModal = ref(false);
+
 const toast = useToast();
 
 const exportWaitingList = () => {
