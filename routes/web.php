@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WaitingListController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AgreementController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,6 +13,9 @@ Route::get('/', function () {
 Route::get('/login', [RegisteredUserController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login', [RegisteredUserController::class, 'login'])->middleware('guest');
 Route::post('/waiting-list', [WaitingListController::class, 'store']);
+Route::get('/terms', [AgreementController::class, 'terms']);
+Route::get('/privacy-policy', [AgreementController::class, 'privacyPolicy']);
+Route::get('/data-processing', [AgreementController::class, 'dataProcessing']);
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/create-admin', [RegisteredUserController::class, 'createAdmin']);
