@@ -1,28 +1,38 @@
-import './bootstrap';
-import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
-import Sidebar from './components/Sidebar.vue';
-import SidebarItem from './components/SidebarItem.vue';
-import Dashboard from './components/Dashboard.vue';
+import "./bootstrap"
+import { createApp } from "vue"
+import { createRouter, createWebHistory } from "vue-router"
+import { createPinia } from "pinia"
+import Toast from "vue-toastification"
+import "vue-toastification/dist/index.css"
 
-// Initialize Vue app
-const app = createApp(Dashboard);
+// Components
+import Sidebar from "./components/Sidebar.vue"
+import SidebarItem from "./components/SidebarItem.vue"
+import Dashboard from "./components/Dashboard.vue"
+
+// Create Vue app
+const app = createApp(Dashboard)
+
+// Create Pinia
+const pinia = createPinia()
 
 // Configure router
 const router = createRouter({
-    history: createWebHistory(),
-    routes: [
-        { path: '/dashboard', component: Dashboard },
-        // Add other routes later
-    ]
-});
+  history: createWebHistory(),
+  routes: [
+    { path: "/dashboard", component: Dashboard },
+    // Add other routes later
+  ],
+})
 
-// Register components
-app.component('sidebar', Sidebar);
-app.component('sidebar-item', SidebarItem);
+// Register global components
+app.component("sidebar", Sidebar)
+app.component("sidebar-item", SidebarItem)
 
-// Use router
-app.use(router);
+// Use plugins
+app.use(router)
+app.use(pinia)
+app.use(Toast)
 
 // Mount the app
-app.mount('#app');
+app.mount("#app")
