@@ -1,6 +1,6 @@
 <template>
     <!-- Top Bar -->
-    <div class="flex items-center ml-[582px] mb-[24px]">
+    <div class="flex items-center ml-[637px] mb-[24px]">
         <!-- Search Bar -->
         <div class="relative w-[241px]">
             <!-- Search Icon -->
