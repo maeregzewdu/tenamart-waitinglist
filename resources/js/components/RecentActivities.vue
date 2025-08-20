@@ -1,5 +1,11 @@
 <template>
+<<<<<<< HEAD
     <div class="bg-white h-[450px] rounded-[10px] border border-[#E5E5E5] mb-8">
+=======
+    <div
+        class="bg-white  h-[450px] rounded-[10px] border border-[#E5E5E5] mb-8"
+    >
+>>>>>>> 1867e0ee66afcd01ce66c2ed252562fa6c5e4150
         <!-- Header -->
 
         <div class="relative flex items-center space-x-3 ml-[20px]">
