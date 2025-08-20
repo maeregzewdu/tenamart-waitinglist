@@ -26,6 +26,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
     Route::get('/waiting-list', [DashboardController::class, 'index']);
     Route::get('/waiting-list/stats', [DashboardController::class, 'stats']);
+    Route::get('/stats/pdf', [DashboardController::class, 'exportStatsPdf']);
 
     Route::put('/current-user', [RegisteredUserController::class, 'update']);
     Route::put('/current-user/password', [RegisteredUserController::class, 'updatePassword']);
