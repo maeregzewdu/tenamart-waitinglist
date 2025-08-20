@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-white w-[652px] h-[538px] rounded-[10px] border border-[#E5E5E5] mb-8"
+        class="bg-white w-[652px] h-[450px] rounded-[10px] border border-[#E5E5E5] mb-8"
     >
         <!-- Header -->
 
