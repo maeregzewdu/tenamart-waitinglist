@@ -9,9 +9,10 @@
         <h1>General settings</h1>
       </div>
       
-      <div class="settings-box">
-        <p class="subtitle">EDIT YOUR NAME AND EMAIL</p>
-        
+      <p class="subtitle">Edit your name and email</p>
+      <div class="divider"></div>
+      
+      <div class="settings-content">
         <div class="form-group">
           <label>Name</label>
           <input 
@@ -33,13 +34,11 @@
         </div>
         
         <button 
-          class="action-btn"
+          class="action-btn green-btn"
           @click="saveProfile"
           :disabled="isSavingProfile || !hasProfileChanges"
         >
-          <div class="icon-container green-bg">
-            <i class="ri-save-line"></i>
-          </div>
+          <i class="ri-save-line"></i>
           <span>{{ isSavingProfile ? 'Saving...' : 'Save changes' }}</span>
         </button>
 
@@ -61,9 +60,10 @@
         <h2>Password settings</h2>
       </div>
       
-      <div class="settings-box">
-        <p class="subtitle">CHANGE YOUR PASSWORD</p>
-        
+      <p class="subtitle">Change your password</p>
+      <div class="divider"></div>
+      
+      <div class="settings-content">
         <div class="form-group">
           <label>Current password</label>
           <input 
@@ -102,13 +102,11 @@
         </div>
         
         <button 
-          class="action-btn"
+          class="action-btn green-btn"
           @click="changePassword"
           :disabled="isChangingPassword || !canChangePassword"
         >
-          <div class="icon-container green-bg">
-            <i class="ri-save-line"></i>
-          </div>
+          <i class="ri-save-line"></i>
           <span>{{ isChangingPassword ? 'Updating...' : 'Change Password' }}</span>
         </button>
 
@@ -329,16 +327,14 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
   overflow: hidden;
 }
 
 .settings-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  flex: 1;
-  min-height: 0;
+  gap: 0.75rem;
 }
 
 .section-header {
@@ -374,26 +370,31 @@ h1, h2 {
 
 .subtitle {
   color: #64748B;
-  margin: 0 0 1rem 0;
-  font-size: 0.8rem;
-  font-weight: 600;
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  padding-left: 3.25rem;
+  margin-top: -1.25rem;
 }
 
-.settings-box {
-  border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 1rem;
-  background: #FFFFFF;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+.divider {
+  height: 1px;
+  background-color: #E2E8F0;
+  margin: 0.5rem 0 1rem 0;
+  width: 100%;
+}
+
+.settings-content {
+  padding-left: 3.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -406,6 +407,7 @@ h1, h2 {
 
 .form-input {
   width: 100%;
+  max-width: 400px;
   padding: 0.6rem 0.8rem;
   border: 1px solid #E2E8F0;
   border-radius: 6px;
@@ -426,37 +428,31 @@ h1, h2 {
 }
 
 .action-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  background: #F1F5F9;
-  color: #1E293B;
+  color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 500;
-  transition: all 0.2s;
-  margin-top: 0.5rem;
+  width: 170px;
+  background: #10B982;
 }
 
 .action-btn:hover:not(:disabled) {
-  background: #E2E8F0;
-  transform: translateY(-1px);
+  background: #10B982;
 }
 
 .action-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  background: #00935d;
 }
 
-.action-btn .icon-container {
-  width: 28px;
-  height: 28px;
-}
-
-.action-btn .icon-container i {
+.action-btn i {
   font-size: 0.9rem;
 }
 
