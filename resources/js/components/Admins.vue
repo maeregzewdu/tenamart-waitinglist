@@ -196,12 +196,18 @@
             </div>
         </div>
     </div>
+    <AdminModal
+        :show="showAdminModal"
+        @close="showAdminModal = false"
+        @created="handleAdminCreated"
+    />
 </template>
 
 <script setup>
+import AdminModal from "@/components/AdminModal.vue";
 import { ref, computed } from "vue";
 import { UserIcon, PencilSquareIcon, TrashIcon } from "@heroicons/vue/24/solid";
-
+const showAdminModal = ref(false);
 const searchQuery = ref("");
 
 // Hardcoded admins

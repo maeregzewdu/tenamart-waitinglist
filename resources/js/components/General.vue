@@ -4,7 +4,7 @@
         <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Total Waiting List -->
             <div
-                class="bg-white h-[130px] rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
+                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
@@ -25,7 +25,7 @@
 
             <!-- Total Admins -->
             <div
-                class="bg-white h-[130px] rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
+                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
@@ -44,7 +44,7 @@
 
             <!-- Top Source -->
             <div
-                class="bg-white h-[130px] rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
+                class="bg-white h-[130px] rounded-[10px] hover:shadow-md border border-[#E5E5E5] flex items-center p-6"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
