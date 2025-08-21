@@ -69,7 +69,7 @@
         
         <button class="download-btn" @click="downloadReport">
           <i class="ri-download-line"></i>
-          <span>Download Report</span>
+          <span>Download Excel</span>
         </button>
       </div>
     </div>
@@ -84,6 +84,9 @@
         <div class="stat-value">{{ filteredUsers.length }}</div>
       </div>
     </div>
+
+    <!-- Horizontal Divider -->
+    <div class="horizontal-divider"></div>
 
     <!-- Loading Indicator -->
     <div v-if="loading" class="loading-overlay">
@@ -307,7 +310,7 @@ export default {
       statusFilter: '',
       showSourceDropdown: false,
       currentPage: 1,
-      usersPerPage: 6,
+      usersPerPage: 6, // This controls how many users are displayed per page (3x2 grid)
       allUsers: [],
       filteredUsers: [],
       sources: ['facebook', 'linkedIn', 'youtube', 'instagram', 'telegram', 'Organic'],
@@ -326,11 +329,16 @@ export default {
       },
       totalItems: 0,
       perPage: 10,
-      loading: false
+      loading: false,
+      serverSidePagination: {
+        current_page: 1,
+        last_page: 1,
+        total: 0
+      }
     }
   },
   created() {
-    this.fetchWaitingList();
+    this.fetchAllUsers();
     document.addEventListener('click', this.handleOutsideClick);
   },
   beforeDestroy() {
@@ -363,12 +371,71 @@ export default {
     }
   },
   methods: {
+    async fetchAllUsers() {
+      this.loading = true;
+      try {
+        const initialResponse = await fetch('/waiting-list?page=1');
+        const initialData = await initialResponse.json();
+        
+        const totalUsers = initialData.waiting_list.total;
+        const perPage = initialData.waiting_list.per_page;
+        const totalPages = initialData.waiting_list.last_page;
+        
+        // Fetch all pages concurrently
+        const pagePromises = [];
+        for (let page = 1; page <= totalPages; page++) {
+          pagePromises.push(fetch(`/waiting-list?page=${page}`));
+        }
+        
+        // Wait for all requests to complete
+        const responses = await Promise.all(pagePromises);
+        const dataPromises = responses.map(response => response.json());
+        const allData = await Promise.all(dataPromises);
+        
+        // Combine all users from all pages
+        this.allUsers = allData.flatMap(data => 
+          data.waiting_list.data.map(user => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            source: user.signup_source,
+            phone: user.phone,
+            pharmacy: user.pharmacy,
+            joinDate: new Date(user.created_at),
+            updatedAt: new Date(user.updated_at)
+          }))
+        );
+        
+        this.filteredUsers = [...this.allUsers];
+        this.totalItems = this.allUsers.length;
+        
+        // Store server-side pagination info
+        this.serverSidePagination = {
+          current_page: 1,
+          last_page: totalPages,
+          total: totalUsers
+        };
+        
+        this.currentPage = 1; // Reset to first page after fetching all data
+        
+        console.log(`Fetched ${this.allUsers.length} users from ${totalPages} pages`);
+        
+      } catch (error) {
+        console.error('Error fetching all users:', error);
+        // Fallback to single page fetch if bulk fetch fails
+        this.fetchWaitingList(1);
+      } finally {
+        this.loading = false;
+      }
+    },
+    
     async fetchWaitingList(page = 1) {
       this.loading = true;
       try {
         const response = await fetch(`/waiting-list?page=${page}`);
         const data = await response.json();
         
+        // Store all users in a single array for client-side pagination
         this.allUsers = data.waiting_list.data.map(user => ({
           id: user.id,
           name: user.name,
@@ -383,7 +450,15 @@ export default {
         this.filteredUsers = [...this.allUsers];
         this.totalItems = data.waiting_list.total;
         this.perPage = data.waiting_list.per_page;
-        this.currentPage = data.waiting_list.current_page;
+        
+        // Store server-side pagination info
+        this.serverSidePagination = {
+          current_page: data.waiting_list.current_page,
+          last_page: data.waiting_list.last_page,
+          total: data.waiting_list.total
+        };
+        
+        this.currentPage = 1; // Reset to first page after fetching new data
       } catch (error) {
         console.error('Error fetching waiting list:', error);
       } finally {
@@ -669,20 +744,17 @@ export default {
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.fetchWaitingList(this.currentPage);
       }
     },
     
     nextPage() {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
-        this.fetchWaitingList(this.currentPage);
       }
     },
     
     goToPage(page) {
       this.currentPage = page;
-      this.fetchWaitingList(page);
     },
     
     closeAllDropdowns() {
@@ -825,7 +897,7 @@ export default {
 .time-filter i {
   padding: 0 0.5rem;
   color: #64748B;
-  border-right: 1px solid #E2E8F0;
+  border-right: 1px solid 'E2E8F0';
   height: 100%;
   display: flex;
   align-items: center;
@@ -836,7 +908,7 @@ export default {
   padding: 0 0.75rem;
   font-size: 0.8rem;
   cursor: pointer;
-  border-right: 1px solid #E2E8F0;
+  border-right: 1px solid 'E2E8F0';
   height: 100%;
   display: flex;
   align-items: center;
@@ -860,7 +932,7 @@ export default {
   top: 100%;
   right: 0;
   background: white;
-  border: 1px solid #E2E8F0;
+  border: 1px solid 'E2E8F0';
   border-radius: 6px;
   width: 150px;
   z-index: 10;
@@ -955,6 +1027,14 @@ export default {
   font-size: 1.5rem;
   font-weight: 700;
   color: #000000;
+}
+
+/* Horizontal Divider */
+.horizontal-divider {
+  height: 1px;
+  background: #E2E8F0;
+  margin: 0.5rem 0 1rem 0;
+  width: 100%;
 }
 
 /* Loading Overlay */

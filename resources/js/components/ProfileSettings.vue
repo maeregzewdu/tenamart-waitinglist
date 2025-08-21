@@ -9,7 +9,7 @@
         <h1>General settings</h1>
       </div>
       
-      <p class="subtitle">Edit your name and email</p>
+      <p class="subtitle">edit your name and email</p>
       <div class="divider"></div>
       
       <div class="settings-content">
@@ -60,7 +60,7 @@
         <h2>Password settings</h2>
       </div>
       
-      <p class="subtitle">Change your password</p>
+      <p class="subtitle">change your password</p>
       <div class="divider"></div>
       
       <div class="settings-content">
@@ -339,8 +339,9 @@ export default {
 
 .section-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
+  margin-top: -0.5rem;
 }
 
 .icon-container {
@@ -350,6 +351,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 0.25rem;
 }
 
 .green-bg {
@@ -366,17 +368,19 @@ h1, h2 {
   font-weight: 600;
   color: #1E293B;
   margin: 0;
+  padding-top: 0.25rem;
 }
 
 .subtitle {
   color: #64748B;
   margin: 0;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding-left: 3.25rem;
-  margin-top: -1.25rem;
+  margin-top: -1.5rem;
+  text-transform: lowercase;
 }
 
 .divider {
@@ -387,7 +391,7 @@ h1, h2 {
 }
 
 .settings-content {
-  padding-left: 3.25rem;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;
