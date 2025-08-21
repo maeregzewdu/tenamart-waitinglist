@@ -100,14 +100,10 @@ class RegisteredUserController extends Controller
         if (Auth::attempt($validated)) {
             $request->session()->regenerate();
 
-            return response()->json([
-                'message' => 'Login successful'
-            ]);
+            return redirect('/dashboard');
         }
 
-        return response()->json([
-            'message' => 'The provided credentials do not match our records.'
-        ], 401);
+        return redirect()->back()->with('error', 'The provided credentials do not match our records');
     }
 
     public function logout(Request $request)

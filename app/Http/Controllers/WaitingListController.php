@@ -11,56 +11,53 @@ use Illuminate\Validation\Rule;
 
 class WaitingListController extends Controller
 {
-     public function store(WaitingListRequest $request)
-{
-    $validated = $request->validated();
+    public function store(WaitingListRequest $request)
+    {
+        $validated = $request->validated();
 
-    $exists = WaitingList::where('email', $validated['email'])
-        ->orWhere('phone', $validated['phone'])
-        ->exists();
+        $exists = WaitingList::where('email', $validated['email'])
+            ->orWhere('phone', $validated['phone'])
+            ->exists();
 
-    if ($exists) {
-        $message = 'You are already on the waiting list!';
+        if ($exists) {
+            $message = 'You are already on the waiting list!';
+
+            if ($request->wantsJson()) {
+                return response()->json(['message' => $message], 409);
+            }
+
+            return redirect()->back()->with('success', $message);
+        }
+
+        // --- Get UTMs before saving ---
+        $utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'referrer'];
+        $utm = [];
+
+        if ($cookie = $request->cookie('utm_data')) {
+            $utm = json_decode($cookie, true) ?: [];
+        }
+
+        $sessionData = $request->session()->get('utm_data', []);
+
+        foreach ($utmKeys as $k) {
+            if (!isset($utm[$k]) && isset($sessionData[$k])) {
+                $utm[$k] = $sessionData[$k];
+            }
+        }
+
+        // --- Merge UTMs into validated data ---
+        $dataToSave = array_merge($validated, $utm);
+
+        WaitingList::create($dataToSave);
+
+        $message = 'You are now on the waiting list!';
 
         if ($request->wantsJson()) {
-            return response()->json(['message' => $message], 409);
+            return response()->json(['message' => $message], 201);
         }
 
-        return redirect()->back()->with('success', $message);
+        return back()->with('success', $message);
     }
-
-    // --- Get UTMs before saving ---
-    $utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'referrer'];
-    $utm = [];
-
-    if ($cookie = $request->cookie('utm_data')) {
-        $utm = json_decode($cookie, true) ?: [];
-    }
-
-    $sessionData = $request->session()->get('utm_data', []);
-
-    foreach ($utmKeys as $k) {
-        if (!isset($utm[$k]) && isset($sessionData[$k])) {
-            $utm[$k] = $sessionData[$k];
-        }
-    }
-
-    // --- Merge UTMs into validated data ---
-    $dataToSave = array_merge($validated, $utm);
-
-    WaitingList::create($dataToSave);
-
-    $message = 'You are now on the waiting list!';
-
-    if ($request->wantsJson()) {
-        return response()->json(['message' => $message], 201);
-    }
-
-    return back()->with('success', $message);
-}
-
-
-        
 
     public function show(WaitingList $waitingList)
     {
