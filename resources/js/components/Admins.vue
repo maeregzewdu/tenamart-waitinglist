@@ -79,7 +79,7 @@
     </div>
     <!-- Admin Cards  -->
     <!-- Border of cards with height and width   -->
-    <hr class="mb-5 border border-[#E5E5E5]" />
+    <hr class="mb-5 border border-[#E5E5E5] mr-[20px]" />
     <div class="grid grid-cols-1 md:grid-cols-3 gap-[25px]">
         <div
             v-for="admin in filteredAdmins"
