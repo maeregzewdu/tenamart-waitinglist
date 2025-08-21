@@ -177,4 +177,15 @@ class DashboardController extends Controller
             'top_sources' => $topSources,
         ]);
     }
+    public function exportStatsPdf(Request $request)
+    {
+        $stats = $this->stats($request)->getData(true); 
+    
+        $pdf = new TCPDF;
+        $pdf::SetTitle('Statistics Report');
+        $pdf::AddPage();
+        $html = view('stats_pdf', compact('stats'))->render();
+        $pdf::writeHTML($html, true, false, true, false, '');
+        $pdf::Output('statistics.pdf');
+    }
 }

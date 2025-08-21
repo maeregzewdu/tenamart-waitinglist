@@ -93,7 +93,7 @@
                 background-image: radial-gradient(rgba(16, 185, 130, 0.4) 1px, transparent 1px);
                 background-size: 30px 30px;
                 pointer-events: none;
-                z-index: 0;
+                z-index: -1;
             }
 
             body {
