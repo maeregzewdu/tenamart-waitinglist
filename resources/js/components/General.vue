@@ -4,7 +4,7 @@
         <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Total Waiting List -->
             <div
-                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
+                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6 transform transition-transform duration-300 hover:scale-105"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
@@ -25,7 +25,7 @@
 
             <!-- Total Admins -->
             <div
-                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6"
+                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6 transform transition-transform duration-300 hover:scale-105"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
@@ -82,6 +82,8 @@ import { UserIcon } from "@heroicons/vue/24/solid";
 import QuickActions from "@/components/QuickActions.vue";
 import RecentActivities from "@/components/RecentActivities.vue";
 import { useUsers } from "@/composables/useUsers";
+import { useAdmins } from "@/composables/useAdmins";
+const { totalAdmins } = useAdmins();
 
 const {
     users,
@@ -94,7 +96,7 @@ const {
     blockUserById,
 } = useUsers();
 
-const totalAdmins = ref(6); // We have to replace with real admin count from our API
+// We have to replace with real admin count from our API
 
 const popularSource = computed(() => {
     const sourceCounts = {};

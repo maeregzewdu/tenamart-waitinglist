@@ -25,7 +25,7 @@
         <!-- Add Admin -->
         <div
             @click="showAdminModal = true"
-            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-50 transition"
+            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
         >
             <!-- Square 24x24 purple button -->
             <div
@@ -42,7 +42,7 @@
         <!-- Create Wait List -->
         <div
             @click="showWaitModal = true"
-            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-50 transition"
+            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
         >
             <!-- Square 24x24 icon button -->
             <div
@@ -62,7 +62,7 @@
             <!-- Download List -->
             <div
                 @click="exportWaitingList"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-50 transition"
+                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
             >
                 <!-- Square Button -->
                 <div
@@ -80,7 +80,7 @@
             <!-- Generate Link -->
             <div
                 @click="generateShareLink"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] w-[276px] h-[48px] flex items-center space-x-4 hover:bg-gray-50 transition"
+                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] w-[276px] h-[48px] flex items-center space-x-4 hover:bg-gray-100 transition"
             >
                 <!-- Square Button -->
                 <div
