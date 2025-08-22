@@ -24,7 +24,7 @@
                 <h3 class="text-base font-semibold text-gray-800 mt-[25px]">
                     Recent Activities
                 </h3>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-500 mb-[5px]">
                     See all recent activities in this site
                 </p>
             </div>
