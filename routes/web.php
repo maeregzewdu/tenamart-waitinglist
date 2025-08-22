@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/delete-account', [RegisteredUserController::class, 'deleteAccount'])->name('delete-account');
     Route::get('/current-user', [RegisteredUserController::class, 'currentUser']);
     Route::get('/dashboard', [DashboardController::class, 'dashboard']);
+    Route::get('/dashboard/general', [DashboardController::class, 'general']);
     Route::get('/waiting-list', [DashboardController::class, 'index']);
     Route::get('/waiting-list/stats', [DashboardController::class, 'stats']);
     Route::get('/stats/pdf', [DashboardController::class, 'exportStatsPdf']);
@@ -31,7 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/current-user', [RegisteredUserController::class, 'update']);
     Route::put('/current-user/password', [RegisteredUserController::class, 'updatePassword']);
 
-    Route::get('/waiting-list/export', [WaitingListController::class, 'export']);
+    Route::get('/waiting-list/export', [WaitingListController::class, 'exportExcel']);
 
     Route::get('/waiting-list/{waitingList}', [WaitingListController::class, 'show']);
     Route::put('/waiting-list/{waitingList}', [DashboardController::class, 'update']);

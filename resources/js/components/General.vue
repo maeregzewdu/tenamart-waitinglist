@@ -82,6 +82,8 @@ import { UserIcon } from "@heroicons/vue/24/solid";
 import QuickActions from "@/components/QuickActions.vue";
 import RecentActivities from "@/components/RecentActivities.vue";
 import { useUsers } from "@/composables/useUsers";
+import { useAdmins } from "@/composables/useAdmins";
+const { totalAdmins } = useAdmins();
 
 const {
     users,
@@ -94,7 +96,7 @@ const {
     blockUserById,
 } = useUsers();
 
-const totalAdmins = ref(6); // We have to replace with real admin count from our API
+// We have to replace with real admin count from our API
 
 const popularSource = computed(() => {
     const sourceCounts = {};
