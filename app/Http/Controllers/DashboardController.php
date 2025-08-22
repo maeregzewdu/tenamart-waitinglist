@@ -3,15 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use App\Models\WaitingList;
 use App\Models\User;
-use App\Exports\WaitingListExport;
+use Illuminate\Validation\Rule;
+use TCPDF;
 
 class DashboardController extends Controller
 {
     public function dashboard(Request $request)
+    {
+        return view('dashboard');
+    }
+
+    public function general(Request $request)
     {
         $totalWaitingList = WaitingList::count();
         $totalAdmin = User::count();
@@ -22,16 +29,14 @@ class DashboardController extends Controller
         ->first();
         $recentActivity = WaitingList::orderBy('created_at', 'desc')->limit(5)->get();
 
-        if ($request->wantsJson()) {
-            return response()->json([
-                'total_waiting_list' => $totalWaitingList,
-                'total_admin' => $totalAdmin,
-                'top_source' => $topSource,
-                'recent_activity' => $recentActivity,
-            ]);
-        }
+        Log::info("Reached general method");
 
-        return view('dashboard', compact('totalWaitingList', 'totalAdmin', 'topSource', 'recentActivity'));
+        return response()->json([
+            'total_waiting_list' => $totalWaitingList,
+            'total_admin' => $totalAdmin,
+            'top_source' => $topSource,
+            'recent_activity' => $recentActivity,
+        ]);
     }
 
     public function index()
@@ -53,13 +58,13 @@ class DashboardController extends Controller
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('waiting_lists', 'email')->ignore($waitingListId),
+                Rule::unique('waiting_lists', 'email')->ignore($waitingList->id),
             ],
             'phone' => [
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('waiting_lists', 'phone')->ignore($waitingListId),
+                Rule::unique('waiting_lists', 'phone')->ignore($waitingList->id),
             ],
             'signup_source' => 'nullable|string'
         ]);
@@ -74,9 +79,9 @@ class DashboardController extends Controller
 
     }
 
-    public function destroy(WaitingList $waitingList)
+    public function destroy(Request $request, WaitingList $waitingList)
     {
-        $waitingList->softDelete();
+        $waitingList->delete();
         if ($request->wantsJson()) {
             return response()->json(['message' => 'Entry deleted successfully']);
         }
@@ -177,15 +182,16 @@ class DashboardController extends Controller
             'top_sources' => $topSources,
         ]);
     }
+
     public function exportStatsPdf(Request $request)
     {
         $stats = $this->stats($request)->getData(true); 
     
         $pdf = new TCPDF;
-        $pdf::SetTitle('Statistics Report');
-        $pdf::AddPage();
+        $pdf->SetTitle('Statistics Report');
+        $pdf->AddPage();
         $html = view('stats_pdf', compact('stats'))->render();
-        $pdf::writeHTML($html, true, false, true, false, '');
-        $pdf::Output('statistics.pdf');
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->Output('statistics.pdf');
     }
 }
