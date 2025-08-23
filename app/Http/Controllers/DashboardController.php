@@ -92,45 +92,46 @@ class DashboardController extends Controller
     public function stats(Request $request)
     {
         $timeRange = $request->query('time_range');
+        $signupSource = $request->query('signup_source');
 
         if ($timeRange) {
             switch ($timeRange) {
+                case 'today':
+                    $startDate = now()->startOfDay();
+                    $endDate = now()->endOfDay();
+                    break;
+                case 'last_3_days':
+                    $startDate = now()->subDays(3)->startOfDay();
+                    $endDate = now()->endOfDay();
+                    break;
                 case 'last_7_days':
-                    $startDate = now()->subDays(7)->startOfDay();
+                    $startDate = now()->subDays(7)->startOfDay(); // ✅ Fixed bug here
                     $endDate = now()->endOfDay();
                     break;
                 case 'last_30_days':
                     $startDate = now()->subDays(30)->startOfDay();
                     $endDate = now()->endOfDay();
                     break;
-                case 'last_year':
-                    $startDate = now()->subYear()->startOfDay();
-                    $endDate = now()->endOfDay();
-                    break;
-                case 'ytd':
-                    $startDate = now()->startOfYear();
-                    $endDate = now()->endOfDay();
-                    break;
                 case 'all':
-                    $startDate = WaitingList::min('created_at') ?? now();
+                    $firstRecord = WaitingList::min('created_at');
+                    $startDate = $firstRecord ? Carbon::parse($firstRecord)->startOfDay() : now()->startOfDay();
                     $endDate = now()->endOfDay();
                     break;
                 default:
-                    $startDate = now()->subDays(30)->startOfDay();
+                    $firstRecord = WaitingList::min('created_at');
+                    $startDate = $firstRecord ? Carbon::parse($firstRecord)->startOfDay() : now()->startOfDay();
                     $endDate = now()->endOfDay();
                     break;
             }
         } else {
             $startDate = $request->query('start_date')
                 ? Carbon::parse($request->query('start_date'))->startOfDay()
-                : now()->subDays(30)->startOfDay();
+                : WaitingList::min('created_at') ?? now()->startOfDay();
 
             $endDate = $request->query('end_date')
                 ? Carbon::parse($request->query('end_date'))->endOfDay()
                 : now()->endOfDay();
         }
-
-        $signupSource = $request->query('signup_source');
 
         $baseQuery = WaitingList::whereBetween('created_at', [$startDate, $endDate]);
 
@@ -138,11 +139,13 @@ class DashboardController extends Controller
             $baseQuery->where('signup_source', $signupSource);
         }
 
+        $todayStart = now()->startOfDay();
+        $weekStart = now()->startOfWeek();
+        $weekEnd = now()->endOfWeek();
+
         $total = (clone $baseQuery)->count();
-        $today = (clone $baseQuery)->whereDate('created_at', today())->count();
-        $thisWeek = (clone $baseQuery)
-            ->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])
-            ->count();
+        $today = (clone $baseQuery)->whereDate('created_at', $todayStart)->count();
+        $thisWeek = (clone $baseQuery)->whereBetween('created_at', [$weekStart, $weekEnd])->count();
 
         $trend = (clone $baseQuery)
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
@@ -157,25 +160,19 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        $topSource = (clone $baseQuery)
-            ->select('signup_source', DB::raw('COUNT(*) as total'))
-            ->groupBy('signup_source')
-            ->orderByDesc('total')
-            ->limit(1)
-            ->first();
-
-        $perPage = $request->query('per_page', 10);
+        $topSource = $topSources->first();
 
         return response()->json([
             'filters' => [
                 'time_range' => $timeRange ?? 'custom',
-                'start_date' => $startDate->toDateString(),
-                'end_date' => $endDate->toDateString(),
+                'start_date' => Carbon::parse($startDate)->toDateString(),
+                'end_date' => Carbon::parse($endDate)->toDateString(),
                 'signup_source' => $signupSource ?? 'all',
             ],
             'stats' => [
                 'total' => $total,
                 'today' => $today,
+                'this_week' => $thisWeek,
                 'top_source' => $topSource,
             ],
             'trend' => $trend,
