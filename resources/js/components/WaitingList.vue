@@ -107,7 +107,6 @@
           <h3>{{ user.name }}</h3>
           <a :href="'mailto:' + user.email" class="user-email">{{ user.email }}</a>
           <div class="user-source">{{ user.source }}</div>
-          <div class="user-date">Joined: {{ formatDate(user.joinDate) }} at {{ formatTime(user.joinDate) }}</div>
         </div>
         
         <!-- Action Buttons -->
@@ -310,7 +309,7 @@ export default {
       statusFilter: '',
       showSourceDropdown: false,
       currentPage: 1,
-      usersPerPage: 6, // This controls how many users are displayed per page (3x2 grid)
+      usersPerPage: 10,
       allUsers: [],
       filteredUsers: [],
       sources: ['facebook', 'linkedIn', 'youtube', 'instagram', 'telegram', 'Organic'],
@@ -437,14 +436,14 @@ export default {
         
         // Store all users in a single array for client-side pagination
         this.allUsers = data.waiting_list.data.map(user => ({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          source: user.signup_source,
-          phone: user.phone,
-          pharmacy: user.pharmacy,
-          joinDate: new Date(user.created_at),
-          updatedAt: new Date(user.updated_at)
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            source: user.signup_source,
+            phone: user.phone,
+            pharmacy: user.pharmacy,
+            joinDate: new Date(user.created_at),
+            updatedAt: new Date(user.updated_at)
         }));
         
         this.filteredUsers = [...this.allUsers];
@@ -897,7 +896,7 @@ export default {
 .time-filter i {
   padding: 0 0.5rem;
   color: #64748B;
-  border-right: 1px solid 'E2E8F0';
+  border-right: 1px solid #E2E8F0;
   height: 100%;
   display: flex;
   align-items: center;
@@ -908,7 +907,7 @@ export default {
   padding: 0 0.75rem;
   font-size: 0.8rem;
   cursor: pointer;
-  border-right: 1px solid 'E2E8F0';
+  border-right: 1px solid #E2E8F0;
   height: 100%;
   display: flex;
   align-items: center;
@@ -932,7 +931,7 @@ export default {
   top: 100%;
   right: 0;
   background: white;
-  border: 1px solid 'E2E8F0';
+  border: 1px solid #E2E8F0;
   border-radius: 6px;
   width: 150px;
   z-index: 10;
@@ -1065,39 +1064,56 @@ export default {
   100% { transform: rotate(360deg); }
 }
 
-/* User Grid - Fixed Size (No Scrolling) */
+/* User Grid - Updated to show 10 users in a 5x2 grid with reduced spacing */
 .user-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 180px);
-  gap: 1rem;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0.0rem 0.5rem;
+  margin: 0 -12px;
   margin-bottom: 0.5rem;
   flex: 1;
   overflow: hidden;
+  height: calc(100% - 200px);
+  padding: 0.1rem 0;
+  align-content: start;
+}
+
+.user-card:nth-child(-n+5) {
+  margin-top: 15px;
+}
+
+.user-card:nth-child(n+6) {
+  margin-top: -50px;
+  position: relative;
+  top: -10px; 
 }
 
 .user-card {
   border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 1rem;
+  border-radius: 8px;
+  padding: 0.8rem;
   display: flex;
   background: #FFFFFF;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   position: relative;
+  height: 160px;
+  overflow: hidden;
 }
 
 .user-avatar {
-  width: 45px;
-  height: 45px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  font-size: 18px;
-  margin-right: 0.8rem;
+  font-size: 16px;
+  margin-right: 0.7rem;
   flex-shrink: 0;
+  margin-top: 0.2rem;
 }
 
 .user-info {
@@ -1105,13 +1121,15 @@ export default {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden;
+  top: 25px;
 }
 
 .user-info h3 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #000000;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1119,10 +1137,10 @@ export default {
 
 .user-email {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #000000;
   text-decoration: none;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1133,42 +1151,51 @@ export default {
 }
 
 .user-source {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #10B982;
   font-style: italic;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-date {
   font-size: 0.75rem;
   color: #64748B;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Action Buttons */
+/* Action Buttons*/
 .action-buttons {
   position: absolute;
-  left: 1rem;
-  bottom: 1rem;
+  left: 0.8rem;
+  bottom: 0.8rem;
   display: flex;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  top: 115px;
 }
 
 .action-btn {
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0.6rem;
   border: none;
-  border-radius: 5px;
-  font-size: 0.85rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
   transition: all 0.2s;
+  gap: 0.3rem;
+  min-width: auto;
+  height: 28px;
 }
 
 .action-btn i {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .action-btn.view {
