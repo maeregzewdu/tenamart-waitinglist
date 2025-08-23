@@ -34,7 +34,7 @@
         <!-- Create Admin Button -->
         <div
             @click="showAdminModal = true"
-            class="flex items-center justify-center w-[154px] h-[40px] bg-tena-green px-3 rounded-md cursor-pointer hover:opacity-90 transition space-x-[14px] ml-[20px]"
+            class="flex items-center justify-center w-[148px] h-[40px] bg-tena-green px-3 rounded-md cursor-pointer hover:opacity-90 transition space-x-[14px] ml-[20px]"
         >
             <!-- Icon -->
             <svg
@@ -79,7 +79,7 @@
     </div>
     <!-- Admin Cards  -->
     <!-- Border of cards with height and width   -->
-    <hr class="mb-5 border border-[#E5E5E5]" />
+    <hr class="mb-5 border border-[#E5E5E5] mr-[20px]" />
     <div class="grid grid-cols-1 md:grid-cols-3 gap-[25px]">
         <div
             v-for="admin in filteredAdmins"
@@ -205,21 +205,31 @@
 
 <script setup>
 import AdminModal from "@/components/AdminModal.vue";
-import { ref, computed } from "vue";
-import { UserIcon, PencilSquareIcon, TrashIcon } from "@heroicons/vue/24/solid";
+import { ref, onMounted, computed } from "vue";
+import { TrashIcon } from "@heroicons/vue/24/solid";
+import axios from "axios";
+
 const showAdminModal = ref(false);
 const searchQuery = ref("");
 
-// Hardcoded admins
-const admins = ref([
-    { id: 1, name: "Abebe Beso Bela", email: "abebebesobela@gmail.com" },
-    { id: 2, name: "Reyan Abdulhakim", email: "reyanabdulhakim@gmail.com" },
-    { id: 3, name: "Hermon Tilahun", email: "hermontilahun3@gmail.com" },
-    { id: 4, name: "Dagim Tafesse", email: "dagimtafesse@gmail.com" },
-    { id: 5, name: "Leul Teka", email: "leulteka@gmail.com" },
-    { id: 6, name: "Kalab Tewodros", email: "kalabtewodros@gmail.com" },
-]);
+// State for admins
+const admins = ref([]);
+const totalAdmins = ref(0);
 
+// Fetch admins from backend
+const fetchAdmins = async () => {
+    try {
+        const res = await axios.get("http://localhost:8000/admins");
+        totalAdmins.value = res.data.total_admins;
+        admins.value = res.data.admins;
+    } catch (error) {
+        console.error("Error fetching admins:", error);
+    }
+};
+
+onMounted(fetchAdmins);
+
+// Search filter
 const filteredAdmins = computed(() =>
     admins.value.filter(
         (admin) =>
@@ -230,7 +240,7 @@ const filteredAdmins = computed(() =>
     )
 );
 
-// Edit modal state
+// ---------------- Edit Logic ----------------
 const isEditing = ref(false);
 const editAdminData = ref({ id: null, name: "", email: "" });
 
@@ -239,17 +249,20 @@ const openEditModal = (admin) => {
     isEditing.value = true;
 };
 
-const saveAdmin = () => {
-    const index = admins.value.findIndex(
-        (a) => a.id === editAdminData.value.id
-    );
-    if (index !== -1) {
-        admins.value[index] = { ...editAdminData.value };
+const saveAdmin = async () => {
+    try {
+        await axios.put(
+            `http://localhost:8000/admins/${editAdminData.value.id}`,
+            editAdminData.value
+        );
+        await fetchAdmins(); // refresh after update
+        isEditing.value = false;
+    } catch (error) {
+        console.error("Error updating admin:", error);
     }
-    isEditing.value = false;
 };
 
-// Delete modal state
+// ---------------- Delete Logic ----------------
 const showDeleteModal = ref(false);
 const userToDelete = ref({ id: null, name: "" });
 
@@ -258,11 +271,16 @@ const openDeleteModal = (admin) => {
     showDeleteModal.value = true;
 };
 
-const deleteUser = () => {
-    admins.value = admins.value.filter(
-        (admin) => admin.id !== userToDelete.value.id
-    );
-    showDeleteModal.value = false;
+const deleteUser = async () => {
+    try {
+        await axios.delete(
+            `http://localhost:8000/admins/${userToDelete.value.id}`
+        );
+        await fetchAdmins(); // refresh after delete
+        showDeleteModal.value = false;
+    } catch (error) {
+        console.error("Error deleting admin:", error);
+    }
 };
 </script>
 

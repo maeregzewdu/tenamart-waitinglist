@@ -24,7 +24,7 @@
                 <h3 class="text-base font-semibold text-gray-800 mt-[25px]">
                     Recent Activities
                 </h3>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm text-gray-500 mb-[5px]">
                     See all recent activities in this site
                 </p>
             </div>
@@ -38,9 +38,10 @@
             <li
                 v-for="(activity, index) in activities"
                 :key="index"
-                class="flex items-start"
+                class="flex items-center bg-gray-50 rounded-md ml-[36px] py-2 cursor-pointer mr-[25px]"
             >
-                <div class="flex-shrink-0 ml-[36px]">
+                <!-- Icon -->
+                <div class="flex-shrink-0">
                     <div :class="`p-2 rounded-md ${activity.iconBgColor}`">
                         <component
                             :is="activity.icon"
@@ -48,11 +49,15 @@
                         />
                     </div>
                 </div>
+
+                <!-- Text -->
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-900">
                         {{ activity.description }}
                     </p>
-                    <p class="text-sm text-gray-500">{{ activity.time }}</p>
+                    <p class="text-sm text-gray-500">
+                        {{ activity.time }}
+                    </p>
                 </div>
             </li>
         </ul>
