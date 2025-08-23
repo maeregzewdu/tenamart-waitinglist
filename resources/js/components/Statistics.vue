@@ -85,7 +85,7 @@
         </div>
         <div class="stats-text">
           <div class="stat-title">New signups</div>
-          <div class="stat-value">{{ stats.new }}</div>
+          <div class="stat-value">{{ stats.today }}</div>
         </div>
       </div>
       
@@ -109,7 +109,7 @@
           <h3>Signups Trend</h3>
         </div>
         <div class="chart-container">
-          <canvas ref="trendChart" :key="'trend-' + chartKey"></canvas>
+          <canvas ref="trendChart"></canvas>
         </div>
       </div>
       
@@ -119,7 +119,7 @@
             <h3>Signup Sources</h3>
           </div>
           <div class="chart-container">
-            <canvas ref="sourceChart" :key="'doughnut-' + chartKey"></canvas>
+            <canvas ref="sourceChart"></canvas>
           </div>
         </div>
         
@@ -128,7 +128,7 @@
             <h3>Signup Sources</h3>
           </div>
           <div class="chart-container">
-            <canvas ref="sourceBarChart" :key="'bar-' + chartKey"></canvas>
+            <canvas ref="sourceBarChart"></canvas>
           </div>
         </div>
       </div>
@@ -150,7 +150,6 @@ export default {
       showSourceDropdown: false,
       showTimeframeDropdown: false,
       isLoading: false,
-      chartKey: 0, // Key for forcing canvas re-render
       
       // Chart references
       trendChart: null,
@@ -167,11 +166,12 @@ export default {
       ],
       stats: {
         total: 0,
-        new: 0,
+        today: 0,
         topSource: ''
       },
-      waitingListData: [],
-      filteredData: []
+      trendData: [],
+      topSourcesData: [],
+      initialDataLoaded: false
     }
   },
   async created() {
@@ -184,10 +184,10 @@ export default {
     async initializeComponent() {
       this.isLoading = true;
       try {
-        await this.fetchWaitingListData();
-        this.applyCurrentFilters();
-        this.updateStatistics();
+        await this.fetchInitialData();
+        await this.fetchStatsData();
         await this.renderAllCharts();
+        this.initialDataLoaded = true;
       } catch (error) {
         console.error('Initialization error:', error);
         this.showErrorNotification('Failed to initialize data. Please try again.');
@@ -211,28 +211,10 @@ export default {
       }
     },
 
-    async refreshComponent() {
+    async refreshStats() {
       this.isLoading = true;
       try {
-        // Increment chart key to force canvas re-render
-        this.chartKey++;
-        
-        // Clean up existing charts
-        this.cleanupCharts();
-        
-        // Wait for DOM update
-        await this.$nextTick();
-        
-        // Fetch fresh data
-        await this.fetchWaitingListData();
-        this.applyCurrentFilters();
-        this.updateStatistics();
-        
-        // Wait again to ensure canvas elements exist
-        await this.$nextTick();
-        
-        // Re-render all charts
-        await this.renderAllCharts();
+        await this.fetchStatsData();
       } catch (error) {
         console.error('Refresh error:', error);
         this.showErrorNotification('Failed to refresh data. Please try again.');
@@ -241,115 +223,74 @@ export default {
       }
     },
 
-    async fetchWaitingListData() {
+    async fetchInitialData() {
       try {
-        const response = await axios.get('/waiting-list?per_page=1000');
-        this.waitingListData = response.data.waiting_list.data;
+        const response = await axios.get('/waiting-list/stats');
+        const data = response.data;
+        
+        this.trendData = data.trend || [];
+        this.topSourcesData = data.top_sources || [];
+        
       } catch (error) {
-        console.error('Error fetching waiting list:', error);
-        this.waitingListData = [];
+        console.error('Error fetching initial data:', error);
+        this.trendData = [];
+        this.topSourcesData = [];
         throw error;
       }
     },
 
-    applyCurrentFilters() {
-      let filtered = [...this.waitingListData];
-      
-      // Apply source filter if selected
-      if (this.selectedSource) {
-        filtered = filtered.filter(user => 
-          user.signup_source && 
-          user.signup_source.toLowerCase() === this.selectedSource.toLowerCase()
-        );
-      }
-      
-      // Apply days filter if selected (mutually exclusive with timeframe)
-      if (this.selectedDays !== null) {
-        const now = new Date();
-        const startDate = new Date(now);
-        startDate.setDate(startDate.getDate() - this.selectedDays);
+    async fetchStatsData() {
+      try {
+        const params = {};
         
-        filtered = filtered.filter(user => {
-          const userDate = new Date(user.created_at);
-          return userDate >= startDate && userDate <= now;
-        });
-      }
-      
-      // Apply timeframe filter if selected (mutually exclusive with days)
-      if (this.selectedTimeframe !== null) {
-        const now = new Date();
-        let startDate = new Date();
-        
-        switch(this.selectedTimeframe) {
-          case 'today':
-            startDate.setHours(0, 0, 0, 0);
-            break;
-          case '3d':
-            startDate.setDate(startDate.getDate() - 3);
-            break;
-          case '7d':
-            startDate.setDate(startDate.getDate() - 7);
-            break;
-          case '30d':
-            startDate.setDate(startDate.getDate() - 30);
-            break;
-          case 'all':
-            // No date filtering needed
-            break;
+        if (this.selectedSource) {
+          params.signup_source = this.selectedSource;
         }
         
-        if (this.selectedTimeframe !== 'all') {
-          filtered = filtered.filter(user => {
-            const userDate = new Date(user.created_at);
-            return userDate >= startDate && userDate <= now;
-          });
+        if (this.selectedDays !== null) {
+          params.days = this.selectedDays;
         }
+        
+        if (this.selectedTimeframe !== null) {
+          params.timeframe = this.selectedTimeframe;
+        }
+        
+        const response = await axios.get('/waiting-list/stats', { params });
+        const data = response.data;
+        
+        this.stats = {
+          total: data.stats.total,
+          today: data.stats.today,
+          topSource: data.stats.top_source ? data.stats.top_source.signup_source : 'None'
+        };
+        
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        this.stats = {
+          total: 0,
+          today: 0,
+          topSource: ''
+        };
+        throw error;
       }
-      
-      this.filteredData = filtered;
     },
-    
-    updateStatistics() {
-      const today = new Date().toISOString().split('T')[0];
-      const newSignups = this.filteredData.filter(user => 
-        user.created_at.split('T')[0] === today
-      ).length;
-      
-      const sourceCounts = {};
-      this.filteredData.forEach(user => {
-        const source = user.signup_source || 'unknown';
-        sourceCounts[source] = (sourceCounts[source] || 0) + 1;
-      });
-      
-      const topSource = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0];
-      
-      this.stats = {
-        total: this.filteredData.length,
-        new: newSignups,
-        topSource: topSource ? topSource[0] : 'None'
-      };
-    },
-    
+
     async renderAllCharts() {
-      if (this.filteredData.length === 0) {
+      if (this.trendData.length === 0 && this.topSourcesData.length === 0) {
         this.cleanupCharts();
         this.showEmptyState();
         return;
       }
       
       try {
-        // Ensure canvas elements exist
         if (!this.$refs.trendChart || !this.$refs.sourceChart || !this.$refs.sourceBarChart) {
           throw new Error('Canvas elements not found');
         }
         
-        // Destroy any existing charts
         this.cleanupCharts();
         
-        // Wait a frame to ensure canvas is ready
         await new Promise(resolve => requestAnimationFrame(resolve));
         
-        // Render charts sequentially
         await this.renderTrendChart();
         await this.renderSourceDoughnutChart();
         await this.renderSourceBarChart();
@@ -362,22 +303,12 @@ export default {
     
     async renderTrendChart() {
       return new Promise((resolve) => {
-        const trendLabels = [];
-        const trendData = [];
-        const now = new Date();
+        const trendLabels = this.trendData.map(item => {
+          const date = new Date(item.date);
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        });
         
-        for (let i = 29; i >= 0; i--) {
-          const date = new Date(now);
-          date.setDate(date.getDate() - i);
-          const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          trendLabels.push(dateStr);
-          
-          const dateISO = date.toISOString().split('T')[0];
-          const count = this.filteredData.filter(user => 
-            user.created_at.split('T')[0] === dateISO
-          ).length;
-          trendData.push(count);
-        }
+        const trendValues = this.trendData.map(item => item.count);
         
         const trendCtx = this.$refs.trendChart.getContext('2d');
         this.trendChart = new Chart(trendCtx, {
@@ -386,7 +317,7 @@ export default {
             labels: trendLabels,
             datasets: [{
               label: 'Signups',
-              data: trendData,
+              data: trendValues,
               borderColor: '#10B982',
               backgroundColor: 'rgba(16, 185, 130, 0.1)',
               tension: 0.3,
@@ -427,14 +358,8 @@ export default {
     
     async renderSourceDoughnutChart() {
       return new Promise((resolve) => {
-        const sourceCounts = {};
-        this.filteredData.forEach(user => {
-          const source = user.signup_source || 'unknown';
-          sourceCounts[source] = (sourceCounts[source] || 0) + 1;
-        });
-        
-        const sourceLabels = Object.keys(sourceCounts);
-        const sourceData = sourceLabels.map(label => sourceCounts[label]);
+        const sourceLabels = this.topSourcesData.map(item => item.signup_source);
+        const sourceData = this.topSourcesData.map(item => item.total);
         
         const sourceCtx = this.$refs.sourceChart.getContext('2d');
         this.sourceChart = new Chart(sourceCtx, {
@@ -492,14 +417,8 @@ export default {
     
     async renderSourceBarChart() {
       return new Promise((resolve) => {
-        const sourceCounts = {};
-        this.filteredData.forEach(user => {
-          const source = user.signup_source || 'unknown';
-          sourceCounts[source] = (sourceCounts[source] || 0) + 1;
-        });
-        
-        const sourceLabels = Object.keys(sourceCounts);
-        const sourceData = sourceLabels.map(label => sourceCounts[label]);
+        const sourceLabels = this.topSourcesData.map(item => item.signup_source);
+        const sourceData = this.topSourcesData.map(item => item.total);
         
         const sourceBarCtx = this.$refs.sourceBarChart.getContext('2d');
         this.sourceBarChart = new Chart(sourceBarCtx, {
@@ -571,20 +490,20 @@ export default {
       this.showSourceDropdown = false;
       this.selectedDays = null;
       this.selectedTimeframe = null;
-      await this.refreshComponent();
+      await this.refreshStats();
     },
     
     async applyDaysFilter(days) {
       this.selectedDays = days;
       this.selectedTimeframe = null;
-      await this.refreshComponent();
+      await this.refreshStats();
     },
     
     async applyTimeframeFilter(timeframe) {
       this.selectedTimeframe = timeframe;
       this.selectedDays = null;
       this.showTimeframeDropdown = false;
-      await this.refreshComponent();
+      await this.refreshStats();
     },
     
     toggleSourceDropdown() {
@@ -616,14 +535,23 @@ export default {
         
         csvContent += "Summary Statistics:\n";
         csvContent += `Total Waiting List,${this.stats.total}\n`;
-        csvContent += `New Signups,${this.stats.new}\n`;
+        csvContent += `New Signups Today,${this.stats.today}\n`;
         csvContent += `Top Source,${this.stats.topSource}\n\n`;
         
-        // Add detailed data
-        csvContent += "Detailed Data:\n";
-        csvContent += "Email,Signup Source,Signup Date\n";
-        this.filteredData.forEach(user => {
-          csvContent += `${user.email},${user.signup_source || 'unknown'},${user.created_at}\n`;
+        // Add trend data
+        csvContent += "Trend Data:\n";
+        csvContent += "Date,Count\n";
+        this.trendData.forEach(item => {
+          csvContent += `${item.date},${item.count}\n`;
+        });
+        
+        csvContent += "\n";
+        
+        // Add top sources data
+        csvContent += "Top Sources:\n";
+        csvContent += "Source,Count\n";
+        this.topSourcesData.forEach(item => {
+          csvContent += `${item.signup_source},${item.total}\n`;
         });
         
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -644,12 +572,10 @@ export default {
     },
     
     showEmptyState() {
-      // You can implement a proper empty state UI here
       console.log('No data available for the current filters');
     },
     
     showErrorNotification(message) {
-      // You can implement a proper notification system here
       console.error('Error:', message);
       alert(message);
     }
@@ -719,7 +645,7 @@ export default {
   align-items: center;
   padding: 0 0.75rem;
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid 'rgba(226, 232, 240, 1)';
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
@@ -754,7 +680,7 @@ export default {
   top: 100%;
   left: 0;
   background: white;
-  border: 1px solid #E2E8F0;
+  border: 1px solid 'rgba(226, 232, 240, 1)';
   border-radius: 6px;
   width: 100%;
   z-index: 10;
@@ -792,7 +718,7 @@ export default {
   display: flex;
   align-items: center;
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid 'rgba(226, 232, 240, 1)';
   border-radius: 6px;
   height: 36px;
   overflow: hidden;
@@ -806,7 +732,7 @@ export default {
 .time-filter i {
   padding: 0 0.5rem;
   color: #64748B;
-  border-right: 1px solid #E2E8F0;
+  border-right: 1px solid 'rgba(226, 232, 240, 1)';
   height: 100%;
   display: flex;
   align-items: center;
@@ -817,7 +743,7 @@ export default {
   padding: 0 0.75rem;
   font-size: 0.8rem;
   cursor: pointer;
-  border-right: 1px solid #E2E8F0;
+  border-right: 1px solid 'rgba(226, 232, 240, 1)';
   height: 100%;
   display: flex;
   align-items: center;
@@ -870,7 +796,7 @@ export default {
 
 .stats-card {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid 'rgba(226, 232, 240, 1)';
   border-radius: 8px;
   padding: 1rem;
   display: flex;
@@ -932,7 +858,7 @@ export default {
 
 .chart-card {
   background: #FFFFFF;
-  border: 1px solid #E2E8F0;
+  border: 1px solid 'rgba(226, 232, 240, 1)';
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
