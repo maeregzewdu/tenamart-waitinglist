@@ -3,7 +3,6 @@
     <div class="flex items-center ml-[637px] mb-[24px]">
         <!-- Search Bar -->
         <div class="relative w-[241px]">
-            <!-- Search Icon -->
             <span
                 class="absolute inset-y-0 left-3 flex items-center text-gray-400"
             >
@@ -22,12 +21,11 @@
                     />
                 </svg>
             </span>
-
-            <!-- Input -->
             <input
+                v-model="searchQuery"
                 type="text"
                 placeholder="Search..."
-                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-tena-green focus:border-transparent"
+                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
             />
         </div>
 
@@ -36,7 +34,6 @@
             @click="showAdminModal = true"
             class="flex items-center justify-center w-[148px] h-[40px] bg-tena-green px-3 rounded-md cursor-pointer hover:opacity-90 transition space-x-[14px] ml-[20px]"
         >
-            <!-- Icon -->
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-5 h-5 text-white"
@@ -44,58 +41,53 @@
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
             >
                 <path d="M5 12h14" />
                 <path d="M12 5v14" />
             </svg>
-
-            <!-- Text -->
-            <span
-                class="text-sm font-semibold text-[14px] text-white whitespace-nowrap"
+            <span class="text-sm font-semibold text-white whitespace-nowrap"
+                >Create Admin</span
             >
-                Create Admin
-            </span>
         </div>
     </div>
 
     <!-- Stats -->
     <div
-        class="bg-white w-[314px] h-[130px] rounded-[10px] border border-[#E5E5E5] flex items-center mb-8"
+        class="bg-white w-[314px] h-[130px] rounded-[10px] transition-transform duration-300 hover:scale-105 border border-[#E5E5E5] flex items-center mb-8"
     >
         <div
             class="bg-tena-green w-[65px] h-[65px] rounded-md ml-[20px] flex items-center justify-center"
         >
             <i class="ri-admin-line text-white w-[24px] h-[24px]"></i>
         </div>
-
         <div class="ml-4">
             <h3 class="text-sm font-medium text-gray-500">Total admins</h3>
             <p class="text-2xl font-semibold text-gray-900">
                 {{ filteredAdmins.length }}
             </p>
         </div>
+        <p v-if="searchQuery" class="text-xs text-gray-500">
+            Showing {{ filteredAdmins.length }}
+        </p>
     </div>
-    <!-- Admin Cards  -->
-    <!-- Border of cards with height and width   -->
+
+    <!-- Admin Cards Scrollable Container -->
     <hr class="mb-5 border border-[#E5E5E5] mr-[20px]" />
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-[25px]">
+    <div
+        class="overflow-y-auto max-h-[calc(100vh-250px)] grid grid-cols-1 md:grid-cols-3 gap-[25px] pb-5"
+    >
         <div
             v-for="admin in filteredAdmins"
             :key="admin.id"
             class="w-[314px] h-[150px] rounded-[10px] border border-[#E5E5E5]"
         >
-            <!-- Avatar and Info Row -->
+            <!-- Avatar and Info -->
             <div class="flex items-center gap-[16px]">
-                <!-- Avatar -->
                 <div
                     class="w-[62px] h-[62px] rounded-full bg-tena-green flex items-center justify-center text-white font-bold text-xl mt-[16px] ml-[16px] mb-[16px]"
                 >
                     {{ admin.name.charAt(0).toUpperCase() }}
                 </div>
-
-                <!-- Name & Email -->
                 <div>
                     <h2 class="text-lg font-semibold text-gray-900">
                         {{ admin.name }}
@@ -104,9 +96,8 @@
                 </div>
             </div>
 
-            <!-- Buttons Container with 16px spacing from card border -->
+            <!-- Buttons -->
             <div class="flex space-x-[10px] ml-[16px]">
-                <!-- Edit Admin Button (136x40px) -->
                 <button
                     @click="openEditModal(admin)"
                     class="w-[136px] h-[40px] bg-tena-green text-white rounded-md inline-flex items-center justify-center space-x-[10px] hover:opacity-90 transition"
@@ -118,13 +109,10 @@
                         >Edit Admin</span
                     >
                 </button>
-
-                <!-- Delete Admin Button (136x40px) -->
                 <button
                     @click="openDeleteModal(admin)"
                     class="w-[136px] h-[40px] bg-red-500 space-x-[10px] text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
                 >
-                    <TrashIcon class="w-[15px] h-[15px]" />
                     <span class="text-sm font-semibold text-[13px]"
                         >Delete Admin</span
                     >
@@ -138,7 +126,7 @@
         v-if="isEditing"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
-        <div class="bg-white p-6 rounded-lg w-96">
+        <div class="bg-white p-6 rounded-md w-96">
             <h2 class="text-sm text-[12px] mb-4">Edit Admin</h2>
             <input
                 v-model="editAdminData.name"
@@ -161,7 +149,7 @@
                 </button>
                 <button
                     @click="saveAdmin"
-                    class="bg-tena-green text-white px-4 py-2 rounded-md"
+                    class="bg-green-600 text-white px-4 py-2 rounded-md"
                 >
                     Save
                 </button>
@@ -172,10 +160,10 @@
     <!-- Delete Confirmation Modal -->
     <div
         v-if="showDeleteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
     >
         <div class="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 class="text-lg font-medium mb-4">Confirm User Deletion</h3>
+            <h3 class="text-lg font-medium mb-4">Confirm Deletion</h3>
             <p class="mb-6">
                 Are you sure you want to delete {{ userToDelete.name }}? This
                 action cannot be undone.
@@ -183,19 +171,21 @@
             <div class="flex justify-end space-x-3">
                 <button
                     @click="showDeleteModal = false"
-                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                    class="px-4 py-2 border rounded-md"
                 >
                     Cancel
                 </button>
                 <button
-                    @click="deleteUser"
-                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    @click="confirmDelete"
+                    class="px-4 py-2 bg-red-600 text-white rounded-md"
                 >
                     Delete
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- Admin Modal -->
     <AdminModal
         :show="showAdminModal"
         @close="showAdminModal = false"
@@ -205,31 +195,18 @@
 
 <script setup>
 import AdminModal from "@/components/AdminModal.vue";
-import { ref, onMounted, computed } from "vue";
-import { TrashIcon } from "@heroicons/vue/24/solid";
-import axios from "axios";
+import { ref, computed } from "vue";
+import { useAdmins } from "@/composables/useAdmins";
 
 const showAdminModal = ref(false);
 const searchQuery = ref("");
+const isEditing = ref(false);
+const editAdminData = ref({ id: null, name: "", email: "" });
+const showDeleteModal = ref(false);
+const userToDelete = ref({ id: null, name: "" });
 
-// State for admins
-const admins = ref([]);
-const totalAdmins = ref(0);
+const { admins, fetchAdmins, updateAdmin, deleteAdmin } = useAdmins();
 
-// Fetch admins from backend
-const fetchAdmins = async () => {
-    try {
-        const res = await axios.get("http://localhost:8000/admins");
-        totalAdmins.value = res.data.total_admins;
-        admins.value = res.data.admins;
-    } catch (error) {
-        console.error("Error fetching admins:", error);
-    }
-};
-
-onMounted(fetchAdmins);
-
-// Search filter
 const filteredAdmins = computed(() =>
     admins.value.filter(
         (admin) =>
@@ -240,52 +217,43 @@ const filteredAdmins = computed(() =>
     )
 );
 
-// ---------------- Edit Logic ----------------
-const isEditing = ref(false);
-const editAdminData = ref({ id: null, name: "", email: "" });
+const handleAdminCreated = async () => {
+    await fetchAdmins();
+};
 
+// Edit
 const openEditModal = (admin) => {
     editAdminData.value = { ...admin };
     isEditing.value = true;
 };
-
 const saveAdmin = async () => {
-    try {
-        await axios.put(
-            `http://localhost:8000/admins/${editAdminData.value.id}`,
-            editAdminData.value
-        );
-        await fetchAdmins(); // refresh after update
+    const res = await updateAdmin(editAdminData.value.id, editAdminData.value);
+    if (res.success) {
+        await fetchAdmins();
         isEditing.value = false;
-    } catch (error) {
-        console.error("Error updating admin:", error);
+    } else {
+        alert(res.message);
     }
 };
 
-// ---------------- Delete Logic ----------------
-const showDeleteModal = ref(false);
-const userToDelete = ref({ id: null, name: "" });
-
+// Delete
 const openDeleteModal = (admin) => {
     userToDelete.value = { ...admin };
     showDeleteModal.value = true;
 };
-
-const deleteUser = async () => {
-    try {
-        await axios.delete(
-            `http://localhost:8000/admins/${userToDelete.value.id}`
-        );
-        await fetchAdmins(); // refresh after delete
+const confirmDelete = async () => {
+    const res = await deleteAdmin(userToDelete.value.id);
+    if (res.success) {
+        await fetchAdmins();
         showDeleteModal.value = false;
-    } catch (error) {
-        console.error("Error deleting admin:", error);
+    } else {
+        alert(res.message);
     }
 };
 </script>
 
 <style>
 .bg-tena-green {
-    background-color: tena-green;
+    background-color: #10b982; /* Tailwind green-600 */
 }
 </style>

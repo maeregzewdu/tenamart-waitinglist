@@ -44,7 +44,7 @@
 
             <!-- Top Source -->
             <div
-                class="bg-white h-[130px] rounded-[10px] hover:shadow-md border border-[#E5E5E5] flex items-center p-6"
+                class="bg-white h-[130px] rounded-[10px] hover:shadow-md border border-[#E5E5E5] flex items-center p-6 transition-transform duration-300 hover:scale-105"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
