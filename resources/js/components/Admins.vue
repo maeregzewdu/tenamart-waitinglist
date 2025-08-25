@@ -1,9 +1,11 @@
 <template>
     <!-- Top Bar -->
-    <div class="flex items-center ml-[637px] mb-[24px]">
+    <div class="flex items-center justify-end gap-4 mb-6">
         <!-- Search Bar -->
-        <div class="relative w-[241px]">
-            <span class="absolute inset-y-0 left-3 flex items-center">
+        <div class="relative w-60">
+            <span
+                class="absolute inset-y-0 left-3 flex items-center text-gray-400"
+            >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5"
@@ -23,18 +25,18 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search..."
-                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md"
+                class="w-full h-10 pl-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-tena-green focus:outline-none"
             />
         </div>
 
         <!-- Create Admin Button -->
-        <div
+        <button
             @click="showAdminModal = true"
-            class="flex items-center justify-center w-[148px] h-[40px] bg-tena-green px-3 rounded-md cursor-pointer hover:opacity-90 transition space-x-[14px] ml-[20px]"
+            class="flex items-center gap-2 h-10 px-4 rounded-md bg-tena-green text-white font-semibold text-sm hover:opacity-90 transition"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-white"
+                class="w-5 h-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -43,10 +45,8 @@
                 <path d="M5 12h14" />
                 <path d="M12 5v14" />
             </svg>
-            <span class="text-sm font-semibold text-white whitespace-nowrap"
-                >Create Admin</span
-            >
-        </div>
+            <span>Create Admin</span>
+        </button>
     </div>
 
     <!-- Stats -->
@@ -114,8 +114,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Pagination Bar for Admins -->
     <!-- Pagination Bar -->
     <div
         class="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3"
