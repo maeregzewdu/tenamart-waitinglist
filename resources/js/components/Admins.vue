@@ -3,9 +3,7 @@
     <div class="flex items-center ml-[637px] mb-[24px]">
         <!-- Search Bar -->
         <div class="relative w-[241px]">
-            <span
-                class="absolute inset-y-0 left-3 flex items-center text-gray-400"
-            >
+            <span class="absolute inset-y-0 left-3 flex items-center">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="h-5 w-5"
@@ -25,7 +23,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search..."
-                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
+                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md"
             />
         </div>
 
@@ -71,20 +69,18 @@
         </p>
     </div>
 
-    <!-- Admin Cards Scrollable Container -->
-    <hr class="mb-5 border border-[#E5E5E5] mr-[20px]" />
-    <div
-        class="overflow-y-auto max-h-[calc(100vh-250px)] grid grid-cols-1 md:grid-cols-3 gap-[25px] pb-5"
-    >
+    <!-- Admin Cards -->
+    <hr class="mb-2 border border-[#E5E5E5] mr-[20px]" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pb-2">
         <div
-            v-for="admin in filteredAdmins"
+            v-for="admin in paginatedAdmins"
             :key="admin.id"
-            class="w-[314px] h-[150px] rounded-[10px] border border-[#E5E5E5]"
+            class="w-full rounded-[10px] border border-[#E5E5E5] p-4"
         >
             <!-- Avatar and Info -->
-            <div class="flex items-center gap-[16px]">
+            <div class="flex items-center gap-4">
                 <div
-                    class="w-[62px] h-[62px] rounded-full bg-tena-green flex items-center justify-center text-white font-bold text-xl mt-[16px] ml-[16px] mb-[16px]"
+                    class="w-[62px] h-[62px] rounded-full bg-tena-green flex items-center justify-center text-white font-bold text-xl"
                 >
                     {{ admin.name.charAt(0).toUpperCase() }}
                 </div>
@@ -97,27 +93,75 @@
             </div>
 
             <!-- Buttons -->
-            <div class="flex space-x-[10px] ml-[16px]">
+            <div class="mt-4 flex gap-2">
                 <button
                     @click="openEditModal(admin)"
-                    class="w-[136px] h-[40px] bg-tena-green text-white rounded-md inline-flex items-center justify-center space-x-[10px] hover:opacity-90 transition"
+                    class="w-[136px] h-[40px] bg-tena-green text-white rounded-md inline-flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
-                    <i
-                        class="ri-pencil-line text-white w-[18px] h-[18px] mb-[10px]"
-                    ></i>
+                    <i class="ri-pencil-line text-white w-[18px] h-[18px]"></i>
                     <span class="text-sm font-semibold text-[13px]"
                         >Edit Admin</span
                     >
                 </button>
                 <button
                     @click="openDeleteModal(admin)"
-                    class="w-[136px] h-[40px] bg-red-500 space-x-[10px] text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
+                    class="w-[136px] h-[40px] bg-red-500 text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
                 >
                     <span class="text-sm font-semibold text-[13px]"
                         >Delete Admin</span
                     >
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Pagination Bar for Admins -->
+    <!-- Pagination Bar -->
+    <div
+        class="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3"
+    >
+        <!-- Page Info -->
+        <div class="text-sm text-gray-600">
+            Showing {{ currentPage }} of {{ totalPages }} pages ({{
+                filteredAdmins.length
+            }}
+            admins)
+        </div>
+
+        <!-- Page Controls -->
+        <div class="flex items-center gap-2">
+            <!-- Previous -->
+            <button
+                class="px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="prevPage"
+                :disabled="currentPage === 1"
+            >
+                <i class="ri-arrow-left-s-line"></i>
+            </button>
+
+            <!-- Page Numbers -->
+            <button
+                v-for="page in visiblePages"
+                :key="page"
+                @click="goToPage(page)"
+                class="px-3 py-1 border rounded-md transition"
+                :class="
+                    page === currentPage
+                        ? 'bg-tena-green text-white border-tena-green'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                "
+            >
+                {{ page }}
+            </button>
+
+            <!-- Next -->
+            <button
+                class="px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                @click="nextPage"
+                :disabled="currentPage === totalPages"
+            >
+                <i class="ri-arrow-right-s-line"></i>
+            </button>
         </div>
     </div>
 
@@ -197,6 +241,7 @@
 import AdminModal from "@/components/AdminModal.vue";
 import { ref, computed } from "vue";
 import { useAdmins } from "@/composables/useAdmins";
+import { watch } from "vue";
 
 const showAdminModal = ref(false);
 const searchQuery = ref("");
@@ -250,6 +295,56 @@ const confirmDelete = async () => {
         alert(res.message);
     }
 };
+
+const currentPage = ref(1);
+const perPage = 6; // number of admins per page
+
+const totalPages = computed(() =>
+    Math.ceil(filteredAdmins.value.length / perPage)
+);
+
+const paginatedAdmins = computed(() => {
+    const start = (currentPage.value - 1) * perPage;
+    return filteredAdmins.value.slice(start, start + perPage);
+});
+
+// limit visible page numbers (example: max 5 at a time)
+const visiblePages = computed(() => {
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
+    let end = start + maxVisible - 1;
+
+    if (end > totalPages.value) {
+        end = totalPages.value;
+        start = Math.max(1, end - maxVisible + 1);
+    }
+
+    const pages = [];
+    for (let i = start; i <= end; i++) {
+        pages.push(i);
+    }
+    return pages;
+});
+
+const prevPage = () => {
+    if (currentPage.value > 1) currentPage.value--;
+};
+
+const nextPage = () => {
+    if (currentPage.value < totalPages.value) currentPage.value++;
+};
+
+const goToPage = (page) => {
+    currentPage.value = page;
+};
+watch(filteredAdmins, () => {
+    if (currentPage.value > totalPages.value) {
+        currentPage.value = totalPages.value;
+    }
+    if (filteredAdmins.value.length === 0) {
+        currentPage.value = 1;
+    }
+});
 </script>
 
 <style>
