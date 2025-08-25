@@ -25,7 +25,7 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search..."
-                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                class="w-full h-[40px] pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:border-transparent"
             />
         </div>
 
@@ -149,7 +149,7 @@
                 </button>
                 <button
                     @click="saveAdmin"
-                    class="bg-green-600 text-white px-4 py-2 rounded-md"
+                    class="bg-tena-green text-white px-4 py-2 rounded-md"
                 >
                     Save
                 </button>
