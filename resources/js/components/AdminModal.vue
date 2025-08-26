@@ -216,14 +216,15 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useToast } from "vue-toastification";
-import { useAuthStore } from "@/stores/auth";
+import axios from "axios";
 
-const toast = useToast();
 const props = defineProps({
     show: Boolean,
 });
 
 const emit = defineEmits(["close", "created"]);
+
+const toast = useToast();
 
 // Form fields
 const name = ref("");
@@ -232,7 +233,7 @@ const password = ref("");
 const confirmPassword = ref("");
 const isSubmitting = ref(false);
 
-// Password validation
+// Password mismatch check
 const passwordMismatch = computed(() => {
     return (
         password.value !== confirmPassword.value &&
@@ -240,14 +241,24 @@ const passwordMismatch = computed(() => {
     );
 });
 
+// Close modal
 const handleClose = () => {
     if (!isSubmitting.value) {
+        resetForm();
         emit("close");
     }
 };
 
+// Reset form
+const resetForm = () => {
+    name.value = "";
+    email.value = "";
+    password.value = "";
+    confirmPassword.value = "";
+};
+
+// Submit form
 const handleSubmit = async () => {
-    // Validate passwords match
     if (passwordMismatch.value) {
         toast.error("Passwords do not match!");
         return;
@@ -256,30 +267,27 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     try {
-        const authStore = useAuthStore();
-        const result = await authStore.createAdmin({
+        const payload = {
             name: name.value.trim(),
             email: email.value.trim(),
             password: password.value,
-        });
+        };
 
-        if (result.success) {
-            toast.success(result.message);
-            emit("created", result.data);
+        // POST request to backend
+        const response = await axios.post(
+            "http://localhost:8000/create-admin",
+            payload
+        );
 
-            // Reset form
-            name.value = "";
-            email.value = "";
-            password.value = "";
-            confirmPassword.value = "";
+        toast.success(response.data.message || "Admin created successfully!");
 
-            emit("close");
-        } else {
-            toast.error(result.message);
-        }
+        // Emit created event to refresh parent
+        emit("created", response.data.admin);
+
+        handleClose();
     } catch (error) {
         console.error("Admin creation error:", error);
-        toast.error(error.message || "Failed to create admin");
+        toast.error(error.response?.data?.message || "Failed to create admin");
     } finally {
         isSubmitting.value = false;
     }

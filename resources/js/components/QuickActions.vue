@@ -120,7 +120,6 @@ import {
     LinkIcon,
     UserPlusIcon,
 } from "@heroicons/vue/24/outline";
-
 import AdminModal from "@/components/AdminModal.vue";
 import { exportToCSV } from "@/utils/exportUtils";
 import { useUsers } from "@/composables/useUsers";
@@ -130,15 +129,16 @@ import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path
 
 const showWaitModal = ref(false);
 const waitListUsers = ref([]); // Array to store new wait list users
+const showAdminModal = ref(false);
 
+const authStore = useAuthStore();
+const { filteredUsers } = useUsers();
+const toast = useToast();
+
+// ------------------ Waiting List ------------------
 const addNewWaitUser = (user) => {
     waitListUsers.value.push(user);
 };
-const authStore = useAuthStore();
-const { filteredUsers } = useUsers();
-const showAdminModal = ref(false);
-
-const toast = useToast();
 
 const exportWaitingList = () => {
     exportToCSV(filteredUsers.value, "tenamart_waiting_list", [
@@ -149,7 +149,6 @@ const exportWaitingList = () => {
         "status",
     ]);
 
-    // Add to activities
     authStore.activities.unshift({
         icon: ArrowDownTrayIcon,
         iconBgColor: "bg-blue-500",
@@ -158,11 +157,11 @@ const exportWaitingList = () => {
     });
 };
 
+// ------------------ Share Link ------------------
 const generateShareLink = () => {
     const link = `${window.location.origin}/join?ref=admin-${Date.now()}`;
     navigator.clipboard.writeText(link);
 
-    // Add to activities
     authStore.activities.unshift({
         icon: LinkIcon,
         iconBgColor: "bg-purple-500",
@@ -173,14 +172,25 @@ const generateShareLink = () => {
     toast.success("Shareable link copied to clipboard!");
 };
 
+// ------------------ Admin Creation ------------------
+let adminCreatedToastShown = false; // prevent double toast
+
 const handleAdminCreated = (newAdmin) => {
-    // Add to activities
+    if (adminCreatedToastShown) return; // skip if already fired
+    adminCreatedToastShown = true;
+
     authStore.activities.unshift({
         icon: UserPlusIcon,
         iconBgColor: "bg-green-500",
         description: `New ${newAdmin.role} added: ${newAdmin.email}`,
         time: "Just now",
     });
-    toast.success("Shareable link copied to clipboard!");
+
+    toast.success(`New admin added: ${newAdmin.email}`);
+
+    // reset after a short delay so next admin can show toast
+    setTimeout(() => {
+        adminCreatedToastShown = false;
+    }, 500);
 };
 </script>
