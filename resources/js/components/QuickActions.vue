@@ -135,14 +135,15 @@ import {
     UserPlusIcon,
 } from "@heroicons/vue/24/outline";
 import AdminModal from "@/components/AdminModal.vue";
-import { exportToCSV } from "@/utils/exportUtils";
 import { useUsers } from "@/composables/useUsers";
 import { useToast } from "vue-toastification";
+import axios from "axios";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path
 
 // Waiting list Scripts
-
 const showWaitModal = ref(false);
 const waitListUsers = ref([]); // Array to store new wait list users
 const showAdminModal = ref(false);
@@ -156,21 +157,67 @@ const addNewWaitUser = (user) => {
     waitListUsers.value.push(user);
 };
 
-const exportWaitingList = () => {
-    exportToCSV(filteredUsers.value, "tenamart_waiting_list", [
-        "name",
-        "email",
-        "signupDate",
-        "source",
-        "status",
-    ]);
+// Export waiting list from backend
+const exportWaitingList = async () => {
+    try {
+        // Fetch first page to get total pages
+        const firstRes = await axios.get(
+            "http://localhost:8000/waiting-list?page=1"
+        );
+        const totalPages = firstRes.data.waiting_list.last_page || 1;
 
-    authStore.activities.unshift({
-        icon: ArrowDownTrayIcon,
-        iconBgColor: "bg-blue-500",
-        description: "Waiting list exported to CSV",
-        time: "Just now",
-    });
+        let allUsers = firstRes.data.waiting_list.data;
+
+        // Fetch remaining pages if any
+        const promises = [];
+        for (let page = 2; page <= totalPages; page++) {
+            promises.push(
+                axios.get(`http://localhost:8000/waiting-list?page=${page}`)
+            );
+        }
+
+        const responses = await Promise.all(promises);
+        responses.forEach((res) => {
+            allUsers = allUsers.concat(res.data.waiting_list.data);
+        });
+
+        // Map users for Excel
+        const excelData = allUsers.map((user) => ({
+            Name: user.name,
+            Email: user.email,
+            SignupDate: new Date(user.created_at).toLocaleDateString(),
+            Source: user.signup_source,
+            Status: user.status || "Active",
+        }));
+
+        // Create workbook & worksheet
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Waiting List");
+
+        // Save as Excel file
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+        });
+        const blob = new Blob([excelBuffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, `waiting-list.xlsx`);
+
+        // Log activity
+        authStore.activities.unshift({
+            icon: ArrowDownTrayIcon,
+            iconBgColor: "bg-blue-500",
+            description: "Waiting list exported to Excel",
+            time: "Just now",
+        });
+
+        toast.success("Waiting list downloaded successfully!");
+    } catch (error) {
+        console.error("Error downloading waiting list:", error);
+        toast.error("Failed to download waiting list.");
+    }
 };
 
 // ------------------ Share Link ------------------
@@ -187,18 +234,4 @@ const generateShareLink = () => {
 
     toast.success("Shareable link copied to clipboard!");
 };
-
-// ------------------ Admin Creation ------------------
-
-// const handleAdminCreated = (newAdmin) => {
-//     if (adminCreatedToastShown) return; // skip if already fired
-//     adminCreatedToastShown = true;
-
-//     authStore.activities.unshift({
-//         icon: UserPlusIcon,
-//         iconBgColor: "bg-green-500",
-//         description: `New ${newAdmin.role} added: ${newAdmin.email}`,
-//         time: "Just now",
-//     });
-// };
 </script>
