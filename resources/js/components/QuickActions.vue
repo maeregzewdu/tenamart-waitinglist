@@ -80,7 +80,7 @@
             <!-- Generate Link -->
             <div
                 @click="generateShareLink"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] w-[276px] h-[48px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
             >
                 <!-- Square Button -->
                 <div
@@ -108,6 +108,7 @@
             :show="showAdminModal"
             @close="showAdminModal = false"
             @created="handleAdminCreated"
+            @error="handleAdminError"
         />
     </div>
 </template>
@@ -173,24 +174,16 @@ const generateShareLink = () => {
 };
 
 // ------------------ Admin Creation ------------------
-let adminCreatedToastShown = false; // prevent double toast
 
-const handleAdminCreated = (newAdmin) => {
-    if (adminCreatedToastShown) return; // skip if already fired
-    adminCreatedToastShown = true;
+// const handleAdminCreated = (newAdmin) => {
+//     if (adminCreatedToastShown) return; // skip if already fired
+//     adminCreatedToastShown = true;
 
-    authStore.activities.unshift({
-        icon: UserPlusIcon,
-        iconBgColor: "bg-green-500",
-        description: `New ${newAdmin.role} added: ${newAdmin.email}`,
-        time: "Just now",
-    });
-
-    toast.success(`New admin added: ${newAdmin.email}`);
-
-    // reset after a short delay so next admin can show toast
-    setTimeout(() => {
-        adminCreatedToastShown = false;
-    }, 500);
-};
+//     authStore.activities.unshift({
+//         icon: UserPlusIcon,
+//         iconBgColor: "bg-green-500",
+//         description: `New ${newAdmin.role} added: ${newAdmin.email}`,
+//         time: "Just now",
+//     });
+// };
 </script>
