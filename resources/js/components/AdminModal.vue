@@ -217,6 +217,8 @@
 import { ref, computed } from "vue";
 import { useToast } from "vue-toastification";
 import axios from "axios";
+import { useAdmins } from "@/composables/useAdmins";
+const { createAdmin } = useAdmins();
 
 const props = defineProps({
     show: Boolean,
@@ -256,8 +258,6 @@ const resetForm = () => {
     password.value = "";
     confirmPassword.value = "";
 };
-
-// Submit form
 const handleSubmit = async () => {
     if (passwordMismatch.value) {
         toast.error("Passwords do not match!");
@@ -266,32 +266,38 @@ const handleSubmit = async () => {
 
     isSubmitting.value = true;
 
-    try {
-        const payload = {
-            name: name.value.trim(),
-            email: email.value.trim(),
-            password: password.value,
-        };
+    const payload = {
+        name: name.value.trim(),
+        email: email.value.trim(),
+        password: password.value,
+    };
 
-        // POST request to backend
+    try {
         const response = await axios.post(
             "http://localhost:8000/create-admin",
             payload
         );
 
+        // Success toast here
         toast.success(response.data.message || "Admin created successfully!");
 
-        // Emit created event to refresh parent
+        // Emit to parent so list can refresh
         emit("created", response.data.admin);
 
         handleClose();
     } catch (error) {
         console.error("Admin creation error:", error);
+
         toast.error(error.response?.data?.message || "Failed to create admin");
+
+        // Optional: emit failure to parent if you want
+        // emit("error", error.response?.data?.message || "Failed to create admin");
     } finally {
         isSubmitting.value = false;
     }
 };
+
+// Submit form
 </script>
 
 <style scoped>
