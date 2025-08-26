@@ -13,15 +13,15 @@
 
             <!-- Title + Subtitle -->
             <div class="flex flex-col flex-1 relative">
-                <!-- Last Seen (top right) -->
-
                 <h3 class="text-base font-semibold text-gray-800 mt-[25px]">
                     Quick Actions
                 </h3>
                 <p class="text-sm text-gray-500">Short cut to common tasks</p>
             </div>
         </div>
+
         <hr class="mt-5 mb-5 border border-[#E5E5E5]" />
+
         <!-- Add Admin -->
         <div
             @click="showAdminModal = true"
@@ -58,13 +58,12 @@
         </div>
 
         <!-- Styled Action Buttons -->
-        <div class="grid grid-cols-1 gap-[6px]">
+        <div class="grid grid-cols-1 gap-[6px] mt-4">
             <!-- Download List -->
             <div
                 @click="exportWaitingList"
                 class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
             >
-                <!-- Square Button -->
                 <div
                     class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
                 >
@@ -82,7 +81,6 @@
                 @click="generateShareLink"
                 class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
             >
-                <!-- Square Button -->
                 <div
                     class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
                 >
@@ -96,14 +94,14 @@
             </div>
         </div>
 
-        <!-- Admin Modal "-->
-        <!-- You can use v-if="showAdminModal exactly right below here <Admin modal -->
+        <!-- Use the CreateWaitModal component (only one modal for waiting list) -->
         <CreateWaitModal
             :show="showWaitModal"
             @close="showWaitModal = false"
             @created="handleAdminCreated"
         />
 
+        <!-- Admin modal -->
         <AdminModal
             :show="showAdminModal"
             @close="showAdminModal = false"
@@ -122,25 +120,28 @@ import {
     UserPlusIcon,
 } from "@heroicons/vue/24/outline";
 import AdminModal from "@/components/AdminModal.vue";
+import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path if needed
 import { exportToCSV } from "@/utils/exportUtils";
 import { useUsers } from "@/composables/useUsers";
 import { useToast } from "vue-toastification";
 
-import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path
-
 const showWaitModal = ref(false);
-const waitListUsers = ref([]); // Array to store new wait list users
 const showAdminModal = ref(false);
 
+// local list of newly created wait list items (optional)
+const waitListUsers = ref([]);
+
 const authStore = useAuthStore();
-const { filteredUsers } = useUsers();
+const { filteredUsers, fetchUsers } = useUsers();
 const toast = useToast();
 
-// ------------------ Waiting List ------------------
+// ------------------ Waiting List helper ------------------
 const addNewWaitUser = (user) => {
-    waitListUsers.value.push(user);
+    // keep a local quick list (optional)
+    waitListUsers.value.unshift(user);
 };
 
+// Export CSV
 const exportWaitingList = () => {
     exportToCSV(filteredUsers.value, "tenamart_waiting_list", [
         "name",
@@ -156,34 +157,58 @@ const exportWaitingList = () => {
         description: "Waiting list exported to CSV",
         time: "Just now",
     });
+    toast.success("Waiting list exported");
 };
 
-// ------------------ Share Link ------------------
+// Generate shareable link
 const generateShareLink = () => {
     const link = `${window.location.origin}/join?ref=admin-${Date.now()}`;
-    navigator.clipboard.writeText(link);
-
-    authStore.activities.unshift({
-        icon: LinkIcon,
-        iconBgColor: "bg-purple-500",
-        description: "New shareable link generated",
-        time: "Just now",
-    });
-
-    toast.success("Shareable link copied to clipboard!");
+    navigator.clipboard
+        .writeText(link)
+        .then(() => {
+            authStore.activities.unshift({
+                icon: LinkIcon,
+                iconBgColor: "bg-purple-500",
+                description: "New shareable link generated",
+                time: "Just now",
+            });
+            toast.success("Shareable link copied to clipboard!");
+        })
+        .catch((err) => {
+            console.error("clipboard error:", err);
+            toast.error("Failed to copy link");
+        });
 };
 
-// ------------------ Admin Creation ------------------
+// ------------------ Handlers for created / error ------------------
+const handleAdminCreated = async (newEntity) => {
+    // newEntity: payload emitted from the modal (created user/admin)
+    if (newEntity) {
+        addNewWaitUser(newEntity);
+    }
 
-// const handleAdminCreated = (newAdmin) => {
-//     if (adminCreatedToastShown) return; // skip if already fired
-//     adminCreatedToastShown = true;
+    // refresh from backend to keep UI consistent
+    if (typeof fetchUsers === "function") {
+        try {
+            await fetchUsers();
+        } catch (err) {
+            console.error("Failed to refresh users after create:", err);
+        }
+    }
 
-//     authStore.activities.unshift({
-//         icon: UserPlusIcon,
-//         iconBgColor: "bg-green-500",
-//         description: `New ${newAdmin.role} added: ${newAdmin.email}`,
-//         time: "Just now",
-//     });
-// };
+    // push activity and notify
+    authStore.activities.unshift({
+        icon: UserPlusIcon,
+        iconBgColor: "bg-green-500",
+        description: `New entry added: ${
+            newEntity?.email || newEntity?.name || "New user"
+        }`,
+        time: "Just now",
+    });
+};
+
+const handleAdminError = (err) => {
+    const message = err?.message || err || "An error occurred";
+    toast.error(message);
+};
 </script>

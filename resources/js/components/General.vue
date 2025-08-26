@@ -9,9 +9,7 @@
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
                 >
-                    <i
-                        class="ri-file-list-3-fill text-white w-[24px] h-[24px]"
-                    ></i>
+                    <i class="ri-file-list-3-fill text-white text-[32px]"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-sm font-medium text-gray-500">
@@ -30,7 +28,7 @@
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
                 >
-                    <i class="ri-admin-line text-white w-[24px] h-[24px]"></i>
+                    <i class="ri-admin-line text-white text-[32px]"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-sm font-medium text-gray-500">
@@ -44,14 +42,12 @@
 
             <!-- Top Source -->
             <div
-                class="bg-white h-[130px] rounded-[10px] hover:shadow-md border border-[#E5E5E5] flex items-center p-6 transition-transform duration-300 hover:scale-105"
+                class="bg-white h-[130px] hover:shadow-md rounded-[10px] border border-[#E5E5E5] flex items-center p-6 transform transition-transform duration-300 hover:scale-105"
             >
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
                 >
-                    <i
-                        class="ri-pinterest-line text-white w-[24px] h-[24px]"
-                    ></i>
+                    <i class="ri-pinterest-line text-white text-[32px]"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-sm font-medium text-gray-500">
