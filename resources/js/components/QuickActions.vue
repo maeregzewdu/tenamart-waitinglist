@@ -13,95 +13,110 @@
 
             <!-- Title + Subtitle -->
             <div class="flex flex-col flex-1 relative">
+                <!-- Last Seen (top right) -->
+
                 <h3 class="text-base font-semibold text-gray-800 mt-[25px]">
                     Quick Actions
                 </h3>
                 <p class="text-sm text-gray-500">Short cut to common tasks</p>
             </div>
         </div>
-
         <hr class="mt-5 mb-5 border border-[#E5E5E5]" />
-
         <!-- Add Admin -->
-        <div
-            @click="showAdminModal = true"
-            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-        >
-            <!-- Square 24x24 purple button -->
-            <div
-                class="bg-tena-purple w-[24px] h-[24px] flex items-center justify-center rounded-md"
-            >
-                <i class="ri-add-line text-white text-[14px]"></i>
-            </div>
-
-            <div>
-                <h3 class="text-sm font-medium text-gray-900">Add Admin</h3>
-            </div>
-        </div>
-
-        <!-- Create Wait List -->
-        <div
-            @click="showWaitModal = true"
-            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-        >
-            <!-- Square 24x24 icon button -->
-            <div
-                class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
-            >
-                <i class="ri-admin-line text-white text-[14px]"></i>
-            </div>
-            <div>
-                <h3 class="text-sm font-medium text-gray-900">
-                    Create Waiting List
-                </h3>
-            </div>
-        </div>
-
-        <!-- Styled Action Buttons -->
-        <div class="grid grid-cols-1 gap-[6px] mt-4">
-            <!-- Download List -->
-            <div
-                @click="exportWaitingList"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-            >
+        <div class="bg-white p-4 rounded-[10px] border border-[#E5E5E5]">
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-col space-y-2">
+                <!-- Add Admin -->
                 <div
-                    class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    @click="showAdminModal = true"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
                 >
-                    <i class="ri-download-line text-white text-[14px]"></i>
+                    <div
+                        class="bg-tena-purple w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-add-line text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Add Admin
+                        </h3>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-900">
-                        Download List
-                    </h3>
+
+                <!-- Create Waiting List -->
+                <div
+                    @click="showWaitModal = true"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                >
+                    <div
+                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-admin-line text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Create Waiting List
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Download List -->
+                <div
+                    @click="exportWaitingList"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                >
+                    <div
+                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-download-line text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Download List
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Generate Link -->
+                <div
+                    @click="generateShareLink"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                >
+                    <div
+                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-link text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Generate Link
+                        </h3>
+                    </div>
                 </div>
             </div>
 
-            <!-- Generate Link -->
-            <div
-                @click="generateShareLink"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-            >
-                <div
-                    class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
-                >
-                    <i class="ri-link text-white text-[14px]"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-900">
-                        Generate Link
-                    </h3>
-                </div>
-            </div>
+            <!-- Modals -->
+            <CreateWaitModal
+                :show="showWaitModal"
+                @close="showWaitModal = false"
+                @created="handleAdminCreated"
+            />
+            <AdminModal
+                :show="showAdminModal"
+                @close="showAdminModal = false"
+                @created="handleAdminCreated"
+                @error="handleAdminError"
+            />
         </div>
 
-        <!-- Use the CreateWaitModal component (only one modal for waiting list) -->
+        <!-- Admin Modal "-->
+        <!-- You can use v-if="showAdminModal exactly right below here <Admin modal -->
         <CreateWaitModal
             :show="showWaitModal"
             @close="showWaitModal = false"
             @created="handleAdminCreated"
         />
 
-        <!-- Admin modal -->
         <AdminModal
             :show="showAdminModal"
             @close="showAdminModal = false"
@@ -120,28 +135,27 @@ import {
     UserPlusIcon,
 } from "@heroicons/vue/24/outline";
 import AdminModal from "@/components/AdminModal.vue";
-import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path if needed
 import { exportToCSV } from "@/utils/exportUtils";
 import { useUsers } from "@/composables/useUsers";
 import { useToast } from "vue-toastification";
 
+import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path
+
+// Waiting list Scripts
+
 const showWaitModal = ref(false);
+const waitListUsers = ref([]); // Array to store new wait list users
 const showAdminModal = ref(false);
 
-// local list of newly created wait list items (optional)
-const waitListUsers = ref([]);
-
 const authStore = useAuthStore();
-const { filteredUsers, fetchUsers } = useUsers();
+const { filteredUsers } = useUsers();
 const toast = useToast();
 
-// ------------------ Waiting List helper ------------------
+// ------------------ Waiting List ------------------
 const addNewWaitUser = (user) => {
-    // keep a local quick list (optional)
-    waitListUsers.value.unshift(user);
+    waitListUsers.value.push(user);
 };
 
-// Export CSV
 const exportWaitingList = () => {
     exportToCSV(filteredUsers.value, "tenamart_waiting_list", [
         "name",
@@ -157,58 +171,34 @@ const exportWaitingList = () => {
         description: "Waiting list exported to CSV",
         time: "Just now",
     });
-    toast.success("Waiting list exported");
 };
 
-// Generate shareable link
+// ------------------ Share Link ------------------
 const generateShareLink = () => {
     const link = `${window.location.origin}/join?ref=admin-${Date.now()}`;
-    navigator.clipboard
-        .writeText(link)
-        .then(() => {
-            authStore.activities.unshift({
-                icon: LinkIcon,
-                iconBgColor: "bg-purple-500",
-                description: "New shareable link generated",
-                time: "Just now",
-            });
-            toast.success("Shareable link copied to clipboard!");
-        })
-        .catch((err) => {
-            console.error("clipboard error:", err);
-            toast.error("Failed to copy link");
-        });
-};
+    navigator.clipboard.writeText(link);
 
-// ------------------ Handlers for created / error ------------------
-const handleAdminCreated = async (newEntity) => {
-    // newEntity: payload emitted from the modal (created user/admin)
-    if (newEntity) {
-        addNewWaitUser(newEntity);
-    }
-
-    // refresh from backend to keep UI consistent
-    if (typeof fetchUsers === "function") {
-        try {
-            await fetchUsers();
-        } catch (err) {
-            console.error("Failed to refresh users after create:", err);
-        }
-    }
-
-    // push activity and notify
     authStore.activities.unshift({
-        icon: UserPlusIcon,
-        iconBgColor: "bg-green-500",
-        description: `New entry added: ${
-            newEntity?.email || newEntity?.name || "New user"
-        }`,
+        icon: LinkIcon,
+        iconBgColor: "bg-purple-500",
+        description: "New shareable link generated",
         time: "Just now",
     });
+
+    toast.success("Shareable link copied to clipboard!");
 };
 
-const handleAdminError = (err) => {
-    const message = err?.message || err || "An error occurred";
-    toast.error(message);
-};
+// ------------------ Admin Creation ------------------
+
+// const handleAdminCreated = (newAdmin) => {
+//     if (adminCreatedToastShown) return; // skip if already fired
+//     adminCreatedToastShown = true;
+
+//     authStore.activities.unshift({
+//         icon: UserPlusIcon,
+//         iconBgColor: "bg-green-500",
+//         description: `New ${newAdmin.role} added: ${newAdmin.email}`,
+//         time: "Just now",
+//     });
+// };
 </script>
