@@ -35,26 +35,10 @@
           </span>
           <span 
             :class="{ active: selectedDays === null }"
-            @click="applyDaysFilter(null)"
+            @click="clearTimeFilters"
           >
             All
           </span>
-        </div>
-
-        <div class="filter-btn" @click.stop="toggleTimeframeDropdown">
-          <i class="ri-filter-line"></i>
-          <span>Filter</span>
-          <i class="ri-arrow-down-s-line"></i>
-          <div class="timeframe-dropdown" v-if="showTimeframeDropdown">
-            <div 
-              v-for="timeframe in timeframes" 
-              :key="timeframe.value"
-              :class="{ active: selectedTimeframe === timeframe.value }"
-              @click="applyTimeframeFilter(timeframe.value)"
-            >
-              {{ timeframe.label }}
-            </div>
-          </div>
         </div>
         
         <button class="download-btn" @click="downloadReport">
@@ -92,7 +76,7 @@
       <div class="stats-card">
         <div class="icon-container">
           <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14.0012 2.33333C20.4444 2.33333 25.6678 7.55667 25.6678 14C25.6678 19.1329 22.3531 23.4914 17.7476 25.0521L17.4835 25.138L14.0957 16.3298C15.3428 16.275 16.3345 15.2301 16.3345 14C16.3345 12.7113 15.2897 11.6667 14.0012 11.6667C12.7125 11.6667 11.6678 12.7113 11.6678 14C11.6678 15.2563 12.6605 16.2806 13.9043 16.3313L10.5175 25.1377L10.2547 25.0521C5.64914 23.4914 2.33447 19.1329 2.33447 14C2.33447 7.55667 7.55782 2.33333 14.0012 2.33333ZM14.0012 4.66666C8.84648 4.66666 4.66781 8.84533 4.66781 14C4.66781 17.4068 6.49304 20.3871 9.21897 22.0167L10.945 17.5268C9.95843 16.6712 9.33447 15.4085 9.33447 14C9.33447 11.4227 11.4238 9.33333 14.0012 9.33333C16.5784 9.33333 18.6678 11.4227 18.6678 14C18.6678 15.4087 18.0437 16.6717 17.0567 17.5273C17.7171 19.2464 18.293 20.7437 18.7831 22.0184C21.5089 20.3876 23.3345 17.407 23.3345 14C23.3345 8.84533 19.1558 4.66666 14.0012 4.66666Z" fill="white"/>
+            <path d="M14.0012 2.33333C20.4444 2.33333 25.6678 7.55667 25.6678 14C25.6678 19.1329 22.3531 23.4914 17.7476 25.0521L17.4835 25.138L14.0957 16.3298C15.3428 16.275 16.3345 15.2301 16.3345 14C16.3345 12.7113 15.2897 11.6667 14.0012 11.6667C12.7125 11.6667 11.6678 12.7113 11.6678 14C11.6678 15.2563 12.6605 16.2806 13.9043 16.3313L10.5175 25.1377L10.2547 25.0521C5.64914 23.4914 2.33447 19.1329 2.33447 14C2.33447 7.55667 7.55782 2.33333 14.0012 2.33333ZM14.0012 4.66666C8.84648 4.66666 4.66781 8.84533 4.66781 14C4.66781 17.4068 6.49304 20.3871 9.21897 22.0167L10.945 17.5268C9.95843 16.6712 9.33447 15.4085 9.33447 14C9.33447 11.4227 11.4238 9.33333 14.0012 9.33333C16.5784 9.33333 18.6678 11.4227 18.6678 14C18.6678 15.4087 18.0437 16.6717 17.0567 17.5273C17.7171 19.2464 18.293 20.7437 18.7831 22.0184C21.5089 20.3876 23.3345 17.407 23.3345 14C23.3345 8.84533 19.1558 4.66666 14.0012 4.66Z" fill="white"/>
           </svg>
         </div>
         <div class="stats-text">
@@ -107,6 +91,14 @@
       <div class="chart-card">
         <div class="chart-header">
           <h3>Signups Trend</h3>
+          <div class="filter-indicator" v-if="hasActiveFilters">
+            <span class="filter-tag" v-if="selectedSource">Source: {{ selectedSource }}</span>
+            <span class="filter-tag" v-if="selectedDays">{{ selectedDays }} days</span>
+            <span class="filter-tag" v-if="!selectedDays && !selectedSource">All data</span>
+          </div>
+          <div v-if="trendData.length === 0" class="no-data-message">
+            No data available for the selected filters
+          </div>
         </div>
         <div class="chart-container">
           <canvas ref="trendChart"></canvas>
@@ -117,8 +109,16 @@
         <div class="chart-card half-width">
           <div class="chart-header">
             <h3>Signup Sources</h3>
+            <div class="filter-indicator" v-if="hasActiveFilters">
+              <span class="filter-tag" v-if="selectedSource">Source: {{ selectedSource }}</span>
+              <span class="filter-tag" v-if="selectedDays">{{ selectedDays }} days</span>
+              <span class="filter-tag" v-if="!selectedDays && !selectedSource">All data</span>
+            </div>
+            <div v-if="topSourcesData.length === 0" class="no-data-message">
+              No data available for the selected filters
+            </div>
           </div>
-          <div class="chart-container">
+          <div class="chart-container pie-chart-container">
             <canvas ref="sourceChart"></canvas>
           </div>
         </div>
@@ -126,6 +126,14 @@
         <div class="chart-card half-width">
           <div class="chart-header">
             <h3>Signup Sources</h3>
+            <div class="filter-indicator" v-if="hasActiveFilters">
+              <span class="filter-tag" v-if="selectedSource">Source: {{ selectedSource }}</span>
+              <span class="filter-tag" v-if="selectedDays">{{ selectedDays }} days</span>
+              <span class="filter-tag" v-if="!selectedDays && !selectedSource">All data</span>
+            </div>
+            <div v-if="topSourcesData.length === 0" class="no-data-message">
+              No data available for the selected filters
+            </div>
           </div>
           <div class="chart-container">
             <canvas ref="sourceBarChart"></canvas>
@@ -146,9 +154,7 @@ export default {
     return {
       selectedSource: '',
       selectedDays: null,
-      selectedTimeframe: null,
       showSourceDropdown: false,
-      showTimeframeDropdown: false,
       isLoading: false,
       
       // Chart references
@@ -157,13 +163,6 @@ export default {
       sourceBarChart: null,
       
       sources: ['facebook', 'linkedIn', 'youtube', 'instagram', 'telegram', 'organic'],
-      timeframes: [
-        { label: 'Today', value: 'today' },
-        { label: 'Last 3 days', value: '3d' },
-        { label: 'Last 7 days', value: '7d' },
-        { label: 'Last 30 days', value: '30d' },
-        { label: 'All time', value: 'all' }
-      ],
       stats: {
         total: 0,
         today: 0,
@@ -172,6 +171,11 @@ export default {
       trendData: [],
       topSourcesData: [],
       initialDataLoaded: false
+    }
+  },
+  computed: {
+    hasActiveFilters() {
+      return this.selectedSource || this.selectedDays !== null;
     }
   },
   async created() {
@@ -184,7 +188,6 @@ export default {
     async initializeComponent() {
       this.isLoading = true;
       try {
-        await this.fetchInitialData();
         await this.fetchStatsData();
         await this.renderAllCharts();
         this.initialDataLoaded = true;
@@ -215,6 +218,7 @@ export default {
       this.isLoading = true;
       try {
         await this.fetchStatsData();
+        await this.renderAllCharts();
       } catch (error) {
         console.error('Refresh error:', error);
         this.showErrorNotification('Failed to refresh data. Please try again.');
@@ -223,46 +227,45 @@ export default {
       }
     },
 
-    async fetchInitialData() {
-      try {
-        const response = await axios.get('/waiting-list/stats');
-        const data = response.data;
-        
-        this.trendData = data.trend || [];
-        this.topSourcesData = data.top_sources || [];
-        
-      } catch (error) {
-        console.error('Error fetching initial data:', error);
-        this.trendData = [];
-        this.topSourcesData = [];
-        throw error;
-      }
-    },
-
     async fetchStatsData() {
       try {
+        let url = '/waiting-list/stats';
         const params = {};
         
-        if (this.selectedSource) {
-          params.signup_source = this.selectedSource;
+        // Build URL based on selected filters
+        if (this.selectedSource && this.selectedDays !== null) {
+          // Both source and days selected
+          url = `/waiting-list/stats?signup_source=${this.selectedSource}&time_range=${this.getTimeRangeValue(this.selectedDays)}`;
+        } else if (this.selectedSource) {
+          // Only source selected
+          url = `/waiting-list/stats?signup_source=${this.selectedSource}`;
+        } else if (this.selectedDays !== null) {
+          // Only days selected
+          url = `/waiting-list/stats?time_range=${this.getTimeRangeValue(this.selectedDays)}`;
         }
         
-        if (this.selectedDays !== null) {
-          params.days = this.selectedDays;
-        }
-        
-        if (this.selectedTimeframe !== null) {
-          params.timeframe = this.selectedTimeframe;
-        }
-        
-        const response = await axios.get('/waiting-list/stats', { params });
+        console.log('Fetching from URL:', url);
+        const response = await axios.get(url);
         const data = response.data;
         
+        // Handle different API response structures
         this.stats = {
-          total: data.stats.total,
-          today: data.stats.today,
-          topSource: data.stats.top_source ? data.stats.top_source.signup_source : 'None'
+          total: data.total || data.stats?.total || 0,
+          today: data.today || data.stats?.today || 0,
+          topSource: data.top_source?.signup_source || data.stats?.top_source?.signup_source || 'None'
         };
+        
+        // Handle trend data from different response structures
+        this.trendData = data.trend || data.trend_data || [];
+        
+        // Handle sources data from different response structures
+        this.topSourcesData = data.top_sources || data.sources_data || [];
+        
+        console.log('Fetched data:', {
+          stats: this.stats,
+          trendData: this.trendData,
+          topSourcesData: this.topSourcesData
+        });
         
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -271,29 +274,52 @@ export default {
           today: 0,
           topSource: ''
         };
+        this.trendData = [];
+        this.topSourcesData = [];
         throw error;
       }
     },
 
-    async renderAllCharts() {
-      if (this.trendData.length === 0 && this.topSourcesData.length === 0) {
-        this.cleanupCharts();
-        this.showEmptyState();
-        return;
+    getTimeRangeValue(days) {
+      // Convert days to API time_range values
+      switch(days) {
+        case 1: return 'today';
+        case 3: return 'last_3_days';
+        case 7: return 'last_7_days';
+        case 30: return 'last_30_days';
+        default: return 'all';
       }
+    },
+
+    async renderAllCharts() {
+      // Wait for DOM to be updated
+      await this.$nextTick();
       
       try {
         if (!this.$refs.trendChart || !this.$refs.sourceChart || !this.$refs.sourceBarChart) {
-          throw new Error('Canvas elements not found');
+          console.log('Canvas elements not found, retrying...');
+          setTimeout(() => this.renderAllCharts(), 100);
+          return;
         }
         
         this.cleanupCharts();
         
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        // Add a small delay to ensure the canvas elements are ready
+        await new Promise(resolve => setTimeout(resolve, 50));
         
-        await this.renderTrendChart();
-        await this.renderSourceDoughnutChart();
-        await this.renderSourceBarChart();
+        // Only render charts if we have data
+        if (this.trendData.length > 0) {
+          await this.renderTrendChart();
+        } else {
+          console.log('No trend data available for rendering');
+        }
+        
+        if (this.topSourcesData.length > 0) {
+          await this.renderSourceDoughnutChart();
+          await this.renderSourceBarChart();
+        } else {
+          console.log('No source data available for rendering');
+        }
       } catch (error) {
         console.error('Chart rendering error:', error);
         this.cleanupCharts();
@@ -304,11 +330,13 @@ export default {
     async renderTrendChart() {
       return new Promise((resolve) => {
         const trendLabels = this.trendData.map(item => {
-          const date = new Date(item.date);
+          // Handle different date field names
+          const dateStr = item.date || item.day || item.created_at;
+          const date = new Date(dateStr);
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         });
         
-        const trendValues = this.trendData.map(item => item.count);
+        const trendValues = this.trendData.map(item => item.count || item.signups);
         
         const trendCtx = this.$refs.trendChart.getContext('2d');
         this.trendChart = new Chart(trendCtx, {
@@ -358,8 +386,8 @@ export default {
     
     async renderSourceDoughnutChart() {
       return new Promise((resolve) => {
-        const sourceLabels = this.topSourcesData.map(item => item.signup_source);
-        const sourceData = this.topSourcesData.map(item => item.total);
+        const sourceLabels = this.topSourcesData.map(item => item.signup_source || item.source);
+        const sourceData = this.topSourcesData.map(item => item.total || item.count);
         
         const sourceCtx = this.$refs.sourceChart.getContext('2d');
         this.sourceChart = new Chart(sourceCtx, {
@@ -379,10 +407,10 @@ export default {
             maintainAspectRatio: false,
             layout: {
               padding: {
-                top: 10,
-                bottom: 10,
-                left: 10,
-                right: 10
+                top: 30,
+                bottom: 30,
+                left: 30,
+                right: 30
               }
             },
             plugins: {
@@ -390,9 +418,9 @@ export default {
                 position: 'right',
                 labels: {
                   boxWidth: 12,
-                  padding: 10,
+                  padding: 20,
                   font: {
-                    size: 11
+                    size: 12
                   }
                 }
               },
@@ -408,7 +436,7 @@ export default {
                 }
               }
             },
-            cutout: '65%'
+            cutout: '50%' // Reduced cutout to make the chart appear larger
           }
         });
         resolve();
@@ -417,8 +445,8 @@ export default {
     
     async renderSourceBarChart() {
       return new Promise((resolve) => {
-        const sourceLabels = this.topSourcesData.map(item => item.signup_source);
-        const sourceData = this.topSourcesData.map(item => item.total);
+        const sourceLabels = this.topSourcesData.map(item => item.signup_source || item.source);
+        const sourceData = this.topSourcesData.map(item => item.total || item.count);
         
         const sourceBarCtx = this.$refs.sourceBarChart.getContext('2d');
         this.sourceBarChart = new Chart(sourceBarCtx, {
@@ -429,7 +457,7 @@ export default {
               label: 'Signups',
               data: sourceData,
               backgroundColor: [
-                '#10B982', '#3B82F6', '#F59E0B', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'
+                '#10B982', '#3B82F6', 'rgba(245, 158, 11, 1)', 'rgba(139, 92, 246, 1)', 'rgba(236, 72, 153, 1)', 'rgba(20, 184, 166, 1)', 'rgba(249, 115, 22, 1)'
               ],
               borderWidth: 0,
               borderRadius: 4
@@ -488,41 +516,25 @@ export default {
     async applySourceFilter(source) {
       this.selectedSource = source;
       this.showSourceDropdown = false;
-      this.selectedDays = null;
-      this.selectedTimeframe = null;
       await this.refreshStats();
     },
     
     async applyDaysFilter(days) {
       this.selectedDays = days;
-      this.selectedTimeframe = null;
       await this.refreshStats();
     },
     
-    async applyTimeframeFilter(timeframe) {
-      this.selectedTimeframe = timeframe;
+    clearTimeFilters() {
       this.selectedDays = null;
-      this.showTimeframeDropdown = false;
-      await this.refreshStats();
+      this.refreshStats();
     },
     
     toggleSourceDropdown() {
       this.showSourceDropdown = !this.showSourceDropdown;
-      if (this.showSourceDropdown) {
-        this.showTimeframeDropdown = false;
-      }
-    },
-    
-    toggleTimeframeDropdown() {
-      this.showTimeframeDropdown = !this.showTimeframeDropdown;
-      if (this.showTimeframeDropdown) {
-        this.showSourceDropdown = false;
-      }
     },
     
     closeAllDropdowns() {
       this.showSourceDropdown = false;
-      this.showTimeframeDropdown = false;
     },
     
     downloadReport() {
@@ -530,8 +542,7 @@ export default {
         let csvContent = "Report Generated At," + new Date().toLocaleString() + "\n\n";
         csvContent += "Current Filters:\n";
         csvContent += `Source,${this.selectedSource || 'All'}\n`;
-        csvContent += `Days Filter,${this.selectedDays ? this.selectedDays + 'd' : 'None'}\n`;
-        csvContent += `Timeframe,${this.selectedTimeframe ? this.timeframes.find(t => t.value === this.selectedTimeframe).label : 'None'}\n\n`;
+        csvContent += `Days Filter,${this.selectedDays ? this.selectedDays + 'd' : 'All'}\n\n`;
         
         csvContent += "Summary Statistics:\n";
         csvContent += `Total Waiting List,${this.stats.total}\n`;
@@ -539,20 +550,27 @@ export default {
         csvContent += `Top Source,${this.stats.topSource}\n\n`;
         
         // Add trend data
-        csvContent += "Trend Data:\n";
+        if (this.trendData.length > 0) {
+          csvContent += "Trend Data:\n";
         csvContent += "Date,Count\n";
-        this.trendData.forEach(item => {
-          csvContent += `${item.date},${item.count}\n`;
-        });
-        
-        csvContent += "\n";
+          this.trendData.forEach(item => {
+            const date = item.date || item.day || item.created_at;
+            const count = item.count || item.signups;
+            csvContent += `${date},${count}\n`;
+          });
+          csvContent += "\n";
+        }
         
         // Add top sources data
-        csvContent += "Top Sources:\n";
-        csvContent += "Source,Count\n";
-        this.topSourcesData.forEach(item => {
-          csvContent += `${item.signup_source},${item.total}\n`;
-        });
+        if (this.topSourcesData.length > 0) {
+          csvContent += "Top Sources:\n";
+          csvContent += "Source,Count\n";
+          this.topSourcesData.forEach(item => {
+            const source = item.signup_source || item.source;
+            const count = item.total || item.count;
+            csvContent += `${source},${count}\n`;
+          });
+        }
         
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
@@ -569,10 +587,6 @@ export default {
         console.error('Error generating report:', error);
         this.showErrorNotification('Failed to generate report. Please try again.');
       }
-    },
-    
-    showEmptyState() {
-      console.log('No data available for the current filters');
     },
     
     showErrorNotification(message) {
@@ -640,12 +654,12 @@ export default {
   position: relative;
 }
 
-.source-filter, .filter-btn {
+.source-filter {
   display: flex;
   align-items: center;
   padding: 0 0.75rem;
   background: #FFFFFF;
-  border: 1px solid 'rgba(226, 232, 240, 1)';
+  border: 1px solid rgba(226, 232, 240, 1);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
@@ -656,31 +670,26 @@ export default {
   transition: all 0.2s ease;
 }
 
-.source-filter:hover, .filter-btn:hover {
+.source-filter:hover {
   border-color: #CBD5E1;
 }
 
-.source-filter i, .filter-btn i {
+.source-filter i {
   margin-left: 0.5rem;
   font-size: 1rem;
   transition: transform 0.2s ease;
 }
 
-.source-filter:hover i, .filter-btn:hover i {
+.source-filter:hover i {
   transform: translateY(1px);
 }
 
-.filter-btn i:first-child {
-  margin-left: 0;
-  margin-right: 0.5rem;
-}
-
-.source-dropdown, .timeframe-dropdown {
+.source-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
   background: white;
-  border: 1px solid 'rgba(226, 232, 240, 1)';
+  border: 1px solid rgba(226, 232, 240, 1);
   border-radius: 6px;
   width: 100%;
   z-index: 10;
@@ -695,30 +704,25 @@ export default {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.source-dropdown div, .timeframe-dropdown div {
+.source-dropdown div {
   padding: 0.5rem 0.75rem;
   cursor: pointer;
   transition: background-color 0.1s ease;
 }
 
-.source-dropdown div:first-child, .timeframe-dropdown div:first-child {
+.source-dropdown div:first-child {
   font-weight: bold;
 }
 
-.source-dropdown div:hover, .timeframe-dropdown div:hover {
+.source-dropdown div:hover {
   background: #F8FAFC;
-}
-
-.source-dropdown div.active, .timeframe-dropdown div.active {
-  background: #F1F5F9;
-  color: #10B982;
 }
 
 .time-filter {
   display: flex;
   align-items: center;
   background: #FFFFFF;
-  border: 1px solid 'rgba(226, 232, 240, 1)';
+  border: 1px solid rgba(226, 232, 240, 1);
   border-radius: 6px;
   height: 36px;
   overflow: hidden;
@@ -732,7 +736,7 @@ export default {
 .time-filter i {
   padding: 0 0.5rem;
   color: #64748B;
-  border-right: 1px solid 'rgba(226, 232, 240, 1)';
+  border-right: 1px solid rgba(226, 232, 240, 1);
   height: 100%;
   display: flex;
   align-items: center;
@@ -743,7 +747,7 @@ export default {
   padding: 0 0.75rem;
   font-size: 0.8rem;
   cursor: pointer;
-  border-right: 1px solid 'rgba(226, 232, 240, 1)';
+  border-right: 1px solid rgba(226, 232, 240, 1);
   height: 100%;
   display: flex;
   align-items: center;
@@ -796,7 +800,7 @@ export default {
 
 .stats-card {
   background: #FFFFFF;
-  border: 1px solid 'rgba(226, 232, 240, 1)';
+  border: 1px solid rgba(226, 232, 240, 1);
   border-radius: 8px;
   padding: 1rem;
   display: flex;
@@ -807,7 +811,7 @@ export default {
 }
 
 .stats-card:hover {
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px极市 6px rgba(0,0,0,0.05);
   transform: translateY(-2px);
 }
 
@@ -858,7 +862,7 @@ export default {
 
 .chart-card {
   background: #FFFFFF;
-  border: 1px solid 'rgba(226, 232, 240, 1)';
+  border: 1px solid rgba(226, 232, 240, 1);
   border-radius: 8px;
   padding: 1rem;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -866,7 +870,7 @@ export default {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  transition: all 0.2s ease;
+  transition: all 极市 0.2s ease;
 }
 
 .chart-card:hover {
@@ -877,13 +881,39 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .chart-header h3 {
   font-size: 0.9rem;
   font-weight: 600;
   color: #000000;
+  margin: 0;
+}
+
+.filter-indicator {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-tag {
+  background: #F1F5F9;
+  color: #64748B;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.no-data-message {
+  font-size: 0.8rem;
+  color: #64748B;
+  font-style: italic;
+  margin-top: 0.5rem;
 }
 
 .chart-container {
@@ -893,6 +923,13 @@ export default {
   width: 100%;
   height: 100%;
   padding: 5px;
+}
+
+.pie-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
 }
 
 .half-width {
@@ -928,9 +965,17 @@ export default {
   
   .source-filter, 
   .time-filter,
-  .filter-btn,
   .download-btn {
     margin-bottom: 0.5rem;
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filter-indicator {
+    margin-top: 0.5rem;
   }
 }
 </style>
