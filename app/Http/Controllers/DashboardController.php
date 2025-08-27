@@ -143,7 +143,7 @@ class DashboardController extends Controller
         $weekStart = now()->startOfWeek();
         $weekEnd = now()->endOfWeek();
 
-        $total = (clone $baseQuery)->count();
+        $total = WaitingList::count();
         $today = (clone $baseQuery)->whereDate('created_at', $todayStart)->count();
         $thisWeek = (clone $baseQuery)->whereBetween('created_at', [$weekStart, $weekEnd])->count();
 

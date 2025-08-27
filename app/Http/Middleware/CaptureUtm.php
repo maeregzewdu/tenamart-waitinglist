@@ -11,10 +11,10 @@ class CaptureUtm
     public function handle(Request $request, Closure $next)
     {
 
-        \Log::info('CaptureUtm ran', [
-            'utm_source' => $request->query('utm_source'),
-            'all_query'  => $request->query()
-        ]);
+        // \Log::info('CaptureUtm ran', [
+        //     'utm_source' => $request->query('utm_source'),
+        //     'all_query'  => $request->query()
+        // ]);
         $utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'];
         $found = [];
 

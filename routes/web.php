@@ -5,6 +5,7 @@ use App\Http\Controllers\WaitingListController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AgreementController;
+use App\Models\User;
 
 Route::get('/', function () {
     return view('welcome');
@@ -19,6 +20,8 @@ Route::get('/data-processing', [AgreementController::class, 'dataProcessing']);
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/create-admin', [RegisteredUserController::class, 'createAdmin']);
+    Route::delete('/admins/{id}', [RegisteredUserController::class, 'deleteAdmin']);
+    Route::put('/admins/{id}', [RegisteredUserController::class, 'updateAdmin']);
     Route::get('/admins', [RegisteredUserController::class, 'admins']);
     Route::post('/logout', [RegisteredUserController::class, 'logout'])->name('logout');
     Route::delete('/delete-account', [RegisteredUserController::class, 'deleteAccount'])->name('delete-account');
