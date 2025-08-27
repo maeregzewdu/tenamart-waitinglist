@@ -9,16 +9,14 @@
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
                 >
-                    <i
-                        class="ri-file-list-3-fill text-white w-[24px] h-[24px]"
-                    ></i>
+                    <i class="ri-file-list-3-fill text-white text-3xl"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-sm font-medium text-gray-500">
                         Total Waiting List
                     </h3>
                     <p class="text-2xl font-semibold text-gray-900">
-                        {{ filteredUsers.length }}
+                        {{ totalWaitingList }}
                     </p>
                 </div>
             </div>
@@ -30,7 +28,7 @@
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
                 >
-                    <i class="ri-admin-line text-white w-[24px] h-[24px]"></i>
+                    <i class="ri-admin-line text-white text-3xl"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-sm font-medium text-gray-500">
@@ -49,9 +47,7 @@
                 <div
                     class="bg-tena-green w-[65px] h-[65px] flex items-center justify-center rounded-md"
                 >
-                    <i
-                        class="ri-pinterest-line text-white w-[24px] h-[24px]"
-                    ></i>
+                    <i class="ri-pinterest-line text-white text-3xl"></i>
                 </div>
                 <div class="ml-4">
                     <h3 class="text-sm font-medium text-gray-500">
@@ -78,15 +74,18 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { UserIcon } from "@heroicons/vue/24/solid";
 import QuickActions from "@/components/QuickActions.vue";
 import RecentActivities from "@/components/RecentActivities.vue";
 import { useUsers } from "@/composables/useUsers";
 import { useAdmins } from "@/composables/useAdmins";
+import axios from "axios";
+
+// Admin count
 const { totalAdmins } = useAdmins();
 
+// Users composable
 const {
-    users,
+    users: composableUsers,
     loading,
     sources,
     filteredUsers,
@@ -96,11 +95,34 @@ const {
     blockUserById,
 } = useUsers();
 
-// We have to replace with real admin count from our API
+// ---------- API stats ----------
+const apiTopSource = ref("");
+const apiStats = ref({ total: 0, today: 0 });
 
-const popularSource = computed(() => {
+const fetchStats = async () => {
+    try {
+        const res = await axios.get("http://localhost:8000/waiting-list/stats");
+        const data = res.data || {};
+        const statsObj = data.stats || data;
+        apiStats.value.total = statsObj.total ?? apiStats.value.total;
+        apiStats.value.today = statsObj.today ?? apiStats.value.today;
+        apiTopSource.value =
+            statsObj.top_source?.signup_source ?? statsObj.topSource ?? "";
+    } catch (error) {
+        console.error("Error fetching stats:", error);
+    }
+};
+onMounted(() => {
+    -fetchWaitingList();
+    +fetchAllWaitingList();
+    fetchStats();
+});
+
+// ---------- computed fallback from local users ----------
+const computedTopSource = computed(() => {
     const sourceCounts = {};
-    users.value.forEach((user) => {
+    composableUsers.value.forEach((user) => {
+        if (!user || !user.source) return;
         sourceCounts[user.source] = (sourceCounts[user.source] || 0) + 1;
     });
     return (
@@ -111,31 +133,108 @@ const popularSource = computed(() => {
     );
 });
 
-const popularSourceCount = computed(() => {
-    if (!popularSource.value) return 0;
-    return users.value.filter((user) => user.source === popularSource.value)
-        .length;
+// ---------------- API-loaded users ----------------
+const apiUsers = ref([]);
+
+const fetchWaitingList = async () => {
+    try {
+        const response = await axios.get("http://localhost:8000/waiting-list");
+        apiUsers.value = response.data.waiting_list.data.map((user) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            source: user.signup_source,
+            joinDate: new Date(user.created_at),
+        }));
+    } catch (error) {
+        console.error("Error fetching waiting list:", error);
+    }
+};
+
+onMounted(() => {
+    fetchWaitingList();
 });
 
-// Pagination
+// Total waiting list
+const totalWaitingList = computed(() => apiUsers.value.length);
+const fetchAllWaitingList = async () => {
+    try {
+        const firstRes = await axios.get(
+            "http://localhost:8000/waiting-list?page=1"
+        );
+        const totalPages = firstRes.data.waiting_list.last_page || 1;
+
+        let allUsers = firstRes.data.waiting_list.data;
+
+        const promises = [];
+        for (let page = 2; page <= totalPages; page++) {
+            promises.push(
+                axios.get(`http://localhost:8000/waiting-list?page=${page}`)
+            );
+        }
+
+        const responses = await Promise.all(promises);
+        responses.forEach((res) => {
+            allUsers = allUsers.concat(res.data.waiting_list.data);
+        });
+
+        apiUsers.value = allUsers.map((user) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            source: user.signup_source,
+            joinDate: new Date(user.created_at),
+        }));
+    } catch (err) {
+        console.error("Error fetching all waiting list:", err);
+    }
+};
+
+// Top source calculation
+const topSource = computed(() => {
+    if (!apiUsers.value.length) return "N/A";
+    const sourceCounts = {};
+    apiUsers.value.forEach((user) => {
+        const src = user.source || "Unknown";
+        sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+    });
+    return Object.entries(sourceCounts).reduce(
+        (a, b) => (a[1] > b[1] ? a : b),
+        ["", 0]
+    )[0];
+});
+
+const popularSource = computed(() => {
+    return apiTopSource.value && apiTopSource.value.length > 0
+        ? apiTopSource.value
+        : computedTopSource.value;
+});
+
+const popularSourceCount = computed(() => {
+    const source = popularSource.value;
+    if (!source || source === "N/A") return 0;
+    return apiUsers.value.filter((u) => u.source === source).length;
+});
+
+// ---------------- Pagination for API-loaded users ----------------
 const itemsPerPage = 9;
 const currentPage = ref(1);
 
 const paginatedUsers = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredUsers.value.slice(start, end);
+    return apiUsers.value.slice(start, end); // <-- use apiUsers, not filteredUsers
 });
 
-const totalPages = computed(() => {
-    return Math.ceil(filteredUsers.value.length / itemsPerPage);
-});
+const totalPages = computed(() =>
+    Math.ceil(apiUsers.value.length / itemsPerPage)
+);
 
 const changePage = (page) => {
     currentPage.value = page;
 };
 
-// Modals
+// ---------- Modals ----------
 const showDeleteModal = ref(false);
 const showBlockModal = ref(false);
 const userToDelete = ref(null);
@@ -151,26 +250,28 @@ const confirmBlockUser = (user) => {
 };
 
 const deleteUser = () => {
-    deleteUserById(userToDelete.value.id);
+    if (userToDelete.value) deleteUserById(userToDelete.value.id);
     showDeleteModal.value = false;
 };
 
 const blockUser = () => {
-    blockUserById(userToBlock.value.id);
+    if (userToBlock.value) blockUserById(userToBlock.value.id);
     showBlockModal.value = false;
 };
 
-// Chart visibility
+// ---------- Chart visibility ----------
 const showChart = ref(true);
 
-// Export to CSV
+// ---------- Export to CSV ----------
 const exportToCSV = () => {
     const headers = ["Name", "Email", "Signup Date", "Source", "Status"];
     const csvContent = [
         headers.join(","),
-        ...filteredUsers.value.map(
+        ...apiUsers.value.map(
             (user) =>
-                `"${user.name}","${user.email}","${user.signupDate}","${user.source}","${user.status}"`
+                `"${user.name}","${
+                    user.email
+                }","${user.joinDate.toISOString()}","${user.source}","Active"`
         ),
     ].join("\n");
 
@@ -185,6 +286,7 @@ const exportToCSV = () => {
     document.body.removeChild(link);
 };
 </script>
+
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 

@@ -56,17 +56,18 @@
         <div
             class="bg-tena-green w-[65px] h-[65px] rounded-md ml-[20px] flex items-center justify-center"
         >
-            <i class="ri-admin-line text-white w-[24px] h-[24px]"></i>
+            <!-- Increase icon size using text-[size] instead of w/h -->
+            <i class="ri-admin-line text-white text-[32px]"></i>
         </div>
-        <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500">Total admins</h3>
+        <div class="ml-4 flex-1">
+            <h3 class="text-sm font-medium text-gray-500">Total Admins</h3>
             <p class="text-2xl font-semibold text-gray-900">
                 {{ filteredAdmins.length }}
             </p>
+            <p v-if="searchQuery" class="text-xs text-gray-500">
+                Showing {{ filteredAdmins.length }}
+            </p>
         </div>
-        <p v-if="searchQuery" class="text-xs text-gray-500">
-            Showing {{ filteredAdmins.length }}
-        </p>
     </div>
 
     <!-- Admin Cards -->

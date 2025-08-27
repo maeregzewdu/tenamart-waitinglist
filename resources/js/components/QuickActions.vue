@@ -23,77 +23,90 @@
         </div>
         <hr class="mt-5 mb-5 border border-[#E5E5E5]" />
         <!-- Add Admin -->
-        <div
-            @click="showAdminModal = true"
-            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-        >
-            <!-- Square 24x24 purple button -->
-            <div
-                class="bg-tena-purple w-[24px] h-[24px] flex items-center justify-center rounded-md"
-            >
-                <i class="ri-add-line text-white text-[14px]"></i>
-            </div>
-
-            <div>
-                <h3 class="text-sm font-medium text-gray-900">Add Admin</h3>
-            </div>
-        </div>
-
-        <!-- Create Wait List -->
-        <div
-            @click="showWaitModal = true"
-            class="cursor-pointer bg-white p-2 rounded-[10px] ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-        >
-            <!-- Square 24x24 icon button -->
-            <div
-                class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
-            >
-                <i class="ri-admin-line text-white text-[14px]"></i>
-            </div>
-            <div>
-                <h3 class="text-sm font-medium text-gray-900">
-                    Create Waiting List
-                </h3>
-            </div>
-        </div>
-
-        <!-- Styled Action Buttons -->
-        <div class="grid grid-cols-1 gap-[6px]">
-            <!-- Download List -->
-            <div
-                @click="exportWaitingList"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-            >
-                <!-- Square Button -->
+        <div class="bg-white p-4 rounded-[10px] border border-[#E5E5E5]">
+            <!-- Quick Action Buttons -->
+            <div class="flex flex-col space-y-2">
+                <!-- Add Admin -->
                 <div
-                    class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    @click="showAdminModal = true"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
                 >
-                    <i class="ri-download-line text-white text-[14px]"></i>
+                    <div
+                        class="bg-tena-purple w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-add-line text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Add Admin
+                        </h3>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-900">
-                        Download List
-                    </h3>
+
+                <!-- Create Waiting List -->
+                <div
+                    @click="showWaitModal = true"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                >
+                    <div
+                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-admin-line text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Create Waiting List
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Download List -->
+                <div
+                    @click="exportWaitingList"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                >
+                    <div
+                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-download-line text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Download List
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Generate Link -->
+                <div
+                    @click="generateShareLink"
+                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                >
+                    <div
+                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                    >
+                        <i class="ri-link text-white text-[14px]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-900">
+                            Generate Link
+                        </h3>
+                    </div>
                 </div>
             </div>
 
-            <!-- Generate Link -->
-            <div
-                @click="generateShareLink"
-                class="cursor-pointer bg-white p-2 rounded-md ml-[36px] flex items-center space-x-4 hover:bg-gray-100 transition"
-            >
-                <!-- Square Button -->
-                <div
-                    class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
-                >
-                    <i class="ri-link text-white text-[14px]"></i>
-                </div>
-                <div>
-                    <h3 class="text-sm font-medium text-gray-900">
-                        Generate Link
-                    </h3>
-                </div>
-            </div>
+            <!-- Modals -->
+            <CreateWaitModal
+                :show="showWaitModal"
+                @close="showWaitModal = false"
+                @created="handleAdminCreated"
+            />
+            <AdminModal
+                :show="showAdminModal"
+                @close="showAdminModal = false"
+                @created="handleAdminCreated"
+                @error="handleAdminError"
+            />
         </div>
 
         <!-- Admin Modal "-->
@@ -122,12 +135,15 @@ import {
     UserPlusIcon,
 } from "@heroicons/vue/24/outline";
 import AdminModal from "@/components/AdminModal.vue";
-import { exportToCSV } from "@/utils/exportUtils";
 import { useUsers } from "@/composables/useUsers";
 import { useToast } from "vue-toastification";
+import axios from "axios";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 import CreateWaitModal from "./CreateWaitModal.vue"; // adjust path
 
+// Waiting list Scripts
 const showWaitModal = ref(false);
 const waitListUsers = ref([]); // Array to store new wait list users
 const showAdminModal = ref(false);
@@ -141,21 +157,67 @@ const addNewWaitUser = (user) => {
     waitListUsers.value.push(user);
 };
 
-const exportWaitingList = () => {
-    exportToCSV(filteredUsers.value, "tenamart_waiting_list", [
-        "name",
-        "email",
-        "signupDate",
-        "source",
-        "status",
-    ]);
+// Export waiting list from backend
+const exportWaitingList = async () => {
+    try {
+        // Fetch first page to get total pages
+        const firstRes = await axios.get(
+            "http://localhost:8000/waiting-list?page=1"
+        );
+        const totalPages = firstRes.data.waiting_list.last_page || 1;
 
-    authStore.activities.unshift({
-        icon: ArrowDownTrayIcon,
-        iconBgColor: "bg-blue-500",
-        description: "Waiting list exported to CSV",
-        time: "Just now",
-    });
+        let allUsers = firstRes.data.waiting_list.data;
+
+        // Fetch remaining pages if any
+        const promises = [];
+        for (let page = 2; page <= totalPages; page++) {
+            promises.push(
+                axios.get(`http://localhost:8000/waiting-list?page=${page}`)
+            );
+        }
+
+        const responses = await Promise.all(promises);
+        responses.forEach((res) => {
+            allUsers = allUsers.concat(res.data.waiting_list.data);
+        });
+
+        // Map users for Excel
+        const excelData = allUsers.map((user) => ({
+            Name: user.name,
+            Email: user.email,
+            SignupDate: new Date(user.created_at).toLocaleDateString(),
+            Source: user.signup_source,
+            Status: user.status || "Active",
+        }));
+
+        // Create workbook & worksheet
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Waiting List");
+
+        // Save as Excel file
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+        });
+        const blob = new Blob([excelBuffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, `waiting-list.xlsx`);
+
+        // Log activity
+        authStore.activities.unshift({
+            icon: ArrowDownTrayIcon,
+            iconBgColor: "bg-blue-500",
+            description: "Waiting list exported to Excel",
+            time: "Just now",
+        });
+
+        toast.success("Waiting list downloaded successfully!");
+    } catch (error) {
+        console.error("Error downloading waiting list:", error);
+        toast.error("Failed to download waiting list.");
+    }
 };
 
 // ------------------ Share Link ------------------
@@ -172,18 +234,4 @@ const generateShareLink = () => {
 
     toast.success("Shareable link copied to clipboard!");
 };
-
-// ------------------ Admin Creation ------------------
-
-// const handleAdminCreated = (newAdmin) => {
-//     if (adminCreatedToastShown) return; // skip if already fired
-//     adminCreatedToastShown = true;
-
-//     authStore.activities.unshift({
-//         icon: UserPlusIcon,
-//         iconBgColor: "bg-green-500",
-//         description: `New ${newAdmin.role} added: ${newAdmin.email}`,
-//         time: "Just now",
-//     });
-// };
 </script>
