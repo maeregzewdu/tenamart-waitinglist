@@ -154,6 +154,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
+    <!-- Delete Confirmation Modal -->
     <div
         v-if="showDeleteModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
@@ -191,9 +192,11 @@
 
 <script setup>
 import AdminModal from "@/components/AdminModal.vue";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useAdmins } from "@/composables/useAdmins";
-import { watch } from "vue";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const showAdminModal = ref(false);
 const searchQuery = ref("");
@@ -218,38 +221,43 @@ const handleAdminCreated = async () => {
     await fetchAdmins();
 };
 
-// Edit
+// ---------------- Edit Admin ----------------
 const openEditModal = (admin) => {
     editAdminData.value = { ...admin };
     isEditing.value = true;
 };
+
 const saveAdmin = async () => {
     const res = await updateAdmin(editAdminData.value.id, editAdminData.value);
     if (res.success) {
         await fetchAdmins();
         isEditing.value = false;
+        toast.success("Admin updated successfully!"); // ✅ toast added
     } else {
-        alert(res.message);
+        toast.error(res.message || "Failed to update admin"); // ✅ toast added
     }
 };
 
-// Delete
+// ---------------- Delete Admin ----------------
 const openDeleteModal = (admin) => {
     userToDelete.value = { ...admin };
     showDeleteModal.value = true;
 };
+
 const confirmDelete = async () => {
     const res = await deleteAdmin(userToDelete.value.id);
     if (res.success) {
         await fetchAdmins();
         showDeleteModal.value = false;
+        toast.success("Admin deleted successfully!"); // ✅ toast added
     } else {
-        alert(res.message);
+        toast.error(res.message || "Failed to delete admin"); // ✅ toast added
     }
 };
 
+// ---------------- Pagination ----------------
 const currentPage = ref(1);
-const perPage = 6; // number of admins per page
+const perPage = 6;
 
 const totalPages = computed(() =>
     Math.ceil(filteredAdmins.value.length / perPage)
@@ -260,7 +268,6 @@ const paginatedAdmins = computed(() => {
     return filteredAdmins.value.slice(start, start + perPage);
 });
 
-// limit visible page numbers (example: max 5 at a time)
 const visiblePages = computed(() => {
     const maxVisible = 5;
     let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
@@ -289,6 +296,7 @@ const nextPage = () => {
 const goToPage = (page) => {
     currentPage.value = page;
 };
+
 watch(filteredAdmins, () => {
     if (currentPage.value > totalPages.value) {
         currentPage.value = totalPages.value;

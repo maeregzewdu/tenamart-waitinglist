@@ -39,7 +39,9 @@
                         <i class="ri-add-line text-white text-[14px]"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-medium text-gray-900">
+                        <h3
+                            class="text-sm font-medium text-[14px] text-gray-900"
+                        >
                             Add Admin
                         </h3>
                     </div>

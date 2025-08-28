@@ -54,7 +54,9 @@
 
                 <!-- Text -->
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-900">
+                    <p
+                        class="text-semi-bold text-[16px] font-medium text-gray-900"
+                    >
                         {{ activity.description }}
                     </p>
                     <p class="text-sm text-gray-500">
