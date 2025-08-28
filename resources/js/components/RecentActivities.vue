@@ -8,7 +8,7 @@
                 class="bg-tena-green w-[50px] h-[50px] rounded-md flex items-center justify-center mt-[20px]"
             >
                 <i
-                    class="ri-cursor-line text-white w-[24px] h-[24px] relative left-[2px]"
+                    class="ri-cursor-line text-white text-[24px] relative left-[2px]"
                 ></i>
             </div>
 
@@ -21,7 +21,9 @@
                     Last 24 hrs
                 </span>
 
-                <h3 class="text-base font-semibold text-gray-800 mt-[25px]">
+                <h3
+                    class="text-base font-semibold text-[24px] text-gray-800 mt-[25px]"
+                >
                     Recent Activities
                 </h3>
                 <p class="text-sm text-gray-500 mb-[5px]">

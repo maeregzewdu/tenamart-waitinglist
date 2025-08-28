@@ -51,7 +51,7 @@
 
     <!-- Stats -->
     <div
-        class="bg-white w-[314px] h-[130px] rounded-[10px] transition-transform duration-300 hover:scale-105 border border-[#E5E5E5] flex items-center mb-8"
+        class="bg-white w-[314px] h-[130px] rounded-[10px] transition-transform duration-300 hover:scale-105 border border-[#E5E5E5] flex items-center mb-2"
     >
         <div
             class="bg-tena-green w-[65px] h-[65px] rounded-md ml-[20px] flex items-center justify-center"
@@ -93,11 +93,11 @@
                 </div>
             </div>
 
-            <!-- Buttons -->
-            <div class="mt-4 flex gap-2">
+            <!-- Buttons - Modified for full width responsiveness -->
+            <div class="mt-4 flex flex-col sm:flex-row gap-2">
                 <button
                     @click="openEditModal(admin)"
-                    class="w-[136px] h-[40px] bg-tena-green text-white rounded-md inline-flex items-center justify-center gap-2 hover:opacity-90 transition"
+                    class="w-full sm:flex-1 h-[40px] bg-tena-green text-white rounded-md inline-flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
                     <i class="ri-pencil-line text-white w-[18px] h-[18px]"></i>
                     <span class="text-sm font-semibold text-[13px]"
@@ -106,7 +106,7 @@
                 </button>
                 <button
                     @click="openDeleteModal(admin)"
-                    class="w-[136px] h-[40px] bg-red-500 text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
+                    class="w-full sm:flex-1 h-[40px] bg-red-500 text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
                 >
                     <span class="text-sm font-semibold text-[13px]"
                         >Delete Admin</span
@@ -116,53 +116,6 @@
         </div>
     </div>
     <!-- Pagination Bar -->
-    <div
-        class="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3"
-    >
-        <!-- Page Info -->
-        <div class="text-sm text-gray-600">
-            Showing {{ currentPage }} of {{ totalPages }} pages ({{
-                filteredAdmins.length
-            }}
-            admins)
-        </div>
-
-        <!-- Page Controls -->
-        <div class="flex items-center gap-2">
-            <!-- Previous -->
-            <button
-                class="px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                @click="prevPage"
-                :disabled="currentPage === 1"
-            >
-                <i class="ri-arrow-left-s-line"></i>
-            </button>
-
-            <!-- Page Numbers -->
-            <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                class="px-3 py-1 border rounded-md transition"
-                :class="
-                    page === currentPage
-                        ? 'bg-tena-green text-white border-tena-green'
-                        : 'bg-white text-gray-700 hover:bg-gray-100'
-                "
-            >
-                {{ page }}
-            </button>
-
-            <!-- Next -->
-            <button
-                class="px-3 py-1 border rounded-md text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                @click="nextPage"
-                :disabled="currentPage === totalPages"
-            >
-                <i class="ri-arrow-right-s-line"></i>
-            </button>
-        </div>
-    </div>
 
     <!-- Edit Modal -->
     <div
