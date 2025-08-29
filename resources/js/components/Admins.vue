@@ -32,7 +32,7 @@
         <!-- Create Admin Button -->
         <button
             @click="showAdminModal = true"
-            class="flex items-center gap-2 h-10 px-4 rounded-md bg-tena-green text-white font-semibold text-sm hover:opacity-90 transition"
+            class="flex items-center gap-2 h-10 px-4 rounded-md hover:cursor-pointer bg-tena-green text-white font-semibold text-sm hover:opacity-90 transition"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
