@@ -19,7 +19,7 @@
         <!-- Create Admin Button -->
         <button
             @click="showAdminModal = true"
-            class="flex items-center gap-2 h-10 px-4 rounded-md bg-tena-green text-white font-semibold text-sm hover:opacity-90 transition"
+            class="flex items-center gap-2 h-10 px-4 rounded-md hover:cursor-pointer bg-tena-green text-white font-semibold text-sm hover:opacity-90 transition"
         >
             <i class="ri-add-line"></i>
             <span>Create Admin</span>
@@ -62,7 +62,7 @@
             <div class="mt-4 flex flex-col sm:flex-row gap-2">
                 <button
                     @click="openEditModal(admin)"
-                    class="w-full sm:flex-1 h-[40px] bg-tena-green text-white rounded-md inline-flex items-center justify-center gap-2 hover:opacity-90 transition"
+                    class="w-full sm:flex-1 h-[40px] bg-tena-green hover:cursor-pointer text-white rounded-md inline-flex items-center justify-center gap-2 hover:opacity-90 transition"
                 >
                     <i class="ri-pencil-line text-white w-[18px] h-[18px]"></i>
                     <span class="text-sm font-semibold text-[13px]"
@@ -71,9 +71,10 @@
                 </button>
                 <button
                     @click="openDeleteModal(admin)"
-                    class="w-full sm:flex-1 h-[40px] bg-red-500 text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
+                    class="w-full sm:flex-1 h-[40px] bg-red-500 hover:cursor-pointer text-white rounded-md inline-flex items-center justify-center hover:opacity-90 transition"
                 >
-                    <span class="text-sm font-semibold text-[13px]"
+                    <span
+                        class="text-sm font-semibold text-[13px] hover:cursor-pointer"
                         >Delete Admin</span
                     >
                 </button>
@@ -104,13 +105,13 @@
             <div class="flex justify-end space-x-3">
                 <button
                     @click="isEditing = false"
-                    class="px-4 py-2 border rounded-md"
+                    class="px-4 py-2 border rounded-md hover:cursor-pointer"
                 >
                     Cancel
                 </button>
                 <button
                     @click="saveAdmin"
-                    class="bg-tena-green text-white px-4 py-2 rounded-md"
+                    class="bg-tena-green hover:cursor-pointer text-white px-4 py-2 rounded-md"
                 >
                     Save
                 </button>
@@ -132,13 +133,13 @@
             <div class="flex justify-end space-x-3">
                 <button
                     @click="showDeleteModal = false"
-                    class="px-4 py-2 border rounded-md"
+                    class="px-4 py-2 border rounded-md hover:cursor-pointer"
                 >
                     Cancel
                 </button>
                 <button
                     @click="confirmDelete"
-                    class="px-4 py-2 bg-red-600 text-white rounded-md"
+                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:cursor-pointer"
                 >
                     Delete
                 </button>
