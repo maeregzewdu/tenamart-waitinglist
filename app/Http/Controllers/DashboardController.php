@@ -23,13 +23,21 @@ class DashboardController extends Controller
         $totalWaitingList = WaitingList::count();
         $totalAdmin = User::count();
         $topSource = DB::table('waiting_lists')
-        ->select('signup_source', DB::raw('COUNT(*) as count'))
-        ->groupBy('signup_source')
-        ->orderByDesc('count')
-        ->first();
-        $recentActivity = WaitingList::orderBy('created_at', 'desc')->limit(5)->get();
+            ->select('signup_source', DB::raw('COUNT(*) as count'))
+            ->groupBy('signup_source')
+            ->orderByDesc('count')
+            ->first();
 
-        Log::info("Reached general method");
+        if (!is_object($topSource) || !property_exists($topSource, 'signup_source')) {
+            $topSource = ['signup_source' => 'none', 'count' => 0];
+        } else {
+            $topSource = [
+                'signup_source' => $topSource->signup_source,
+                'count' => $topSource->count,
+            ];
+        }
+
+        $recentActivity = WaitingList::orderBy('created_at', 'desc')->limit(5)->get();
 
         return response()->json([
             'total_waiting_list' => $totalWaitingList,

@@ -6,20 +6,7 @@
             <span
                 class="absolute inset-y-0 left-3 flex items-center text-gray-400"
             >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    stroke-width="2"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
-                    />
-                </svg>
+                <i class="ri-search-line"></i>
             </span>
             <input
                 v-model="searchQuery"
@@ -34,49 +21,27 @@
             @click="showAdminModal = true"
             class="flex items-center gap-2 h-10 px-4 rounded-md bg-tena-green text-white font-semibold text-sm hover:opacity-90 transition"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-            >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-            </svg>
+            <i class="ri-add-line"></i>
             <span>Create Admin</span>
         </button>
     </div>
 
     <!-- Stats -->
-    <div
-        class="bg-white w-[314px] h-[130px] rounded-[10px] transition-transform duration-300 hover:scale-105 border border-[#E5E5E5] flex items-center mb-2"
-    >
-        <div
-            class="bg-tena-green w-[65px] h-[65px] rounded-md ml-[20px] flex items-center justify-center"
-        >
-            <!-- Increase icon size using text-[size] instead of w/h -->
-            <i class="ri-admin-line text-white text-[32px]"></i>
-        </div>
-        <div class="ml-4 flex-1">
-            <h3 class="text-sm font-medium text-gray-500">Total Admins</h3>
-            <p class="text-2xl font-semibold text-gray-900">
-                {{ filteredAdmins.length }}
-            </p>
-            <p v-if="searchQuery" class="text-xs text-gray-500">
-                Showing {{ filteredAdmins.length }}
-            </p>
-        </div>
+    <div class="grid grid-cols-3 gap-6">
+        <StatCard
+            title="Total Admins"
+            :data="admins.length"
+            icon="ri-user-settings-fill"
+        />
     </div>
 
     <!-- Admin Cards -->
-    <hr class="mb-2 border border-[#E5E5E5] mr-[20px]" />
+    <hr class="my-5 text-neutral-200" />
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pb-2">
         <div
             v-for="admin in paginatedAdmins"
             :key="admin.id"
-            class="w-full rounded-[10px] border border-[#E5E5E5] p-4"
+            class="w-full rounded-[10px] border border-[#E5E5E5] p-4 bg-white"
         >
             <!-- Avatar and Info -->
             <div class="flex items-center gap-4">
@@ -194,6 +159,7 @@ import AdminModal from "@/components/AdminModal.vue";
 import { ref, computed, watch } from "vue";
 import { useAdmins } from "@/composables/useAdmins";
 import { useToast } from "vue-toastification";
+import StatCard from "./ui/StatCard.vue";
 
 const toast = useToast();
 

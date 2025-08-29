@@ -1,13 +1,13 @@
 <template>
-    <div class="bg-white p-2 rounded-[10px] border border-[#E5E5E5] mb-8">
+    <div class="bg-white rounded-[10px] border border-[#E5E5E5] p-[20px]">
         <!-- Section Title -->
         <div class="relative flex items-center space-x-3">
             <!-- Green box with cursor icon -->
             <div
-                class="bg-tena-green w-[50px] h-[50px] rounded-md ml-[20px] flex items-center mt-5 justify-center"
+                class="bg-tena-green w-[50px] h-[50px] rounded-md flex items-center justify-center"
             >
                 <i
-                    class="ri-cursor-line text-white text-[24px] relative left-[2px]"
+                    class="ri-cursor-line text-white text-2xl relative"
                 ></i>
             </div>
 
@@ -16,31 +16,31 @@
                 <!-- Last Seen (top right) -->
 
                 <h3
-                    class="text-base font-semibold text-[24px] text-gray-800 mt-[25px]"
+                    class="text-base font-semibold text-[24px] text-gray-800"
                 >
                     Quick Actions
                 </h3>
                 <p class="text-sm text-gray-500">Short cut to common tasks</p>
             </div>
         </div>
-        <hr class="mt-5 mb-5 border border-[#E5E5E5]" />
+        <hr class="my-5 text-neutral-200" />
         <!-- Add Admin -->
-        <div class="bg-white p-4 rounded-[10px]">
+        <div class="bg-white rounded-lg">
             <!-- Quick Action Buttons -->
-            <div class="flex flex-col space-y-2">
+            <div class="space-y-4">
                 <!-- Add Admin -->
                 <div
                     @click="showAdminModal = true"
-                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                    class="cursor-pointer bg-white rounded-[10px] flex items-center space-x-4 transition"
                 >
                     <div
-                        class="bg-tena-purple w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                        class="bg-tena-purple w-[40px] h-[40px] flex items-center justify-center rounded-md"
                     >
-                        <i class="ri-add-line text-white text-[14px]"></i>
+                        <i class="ri-add-line text-white text-[18px]"></i>
                     </div>
                     <div>
                         <h3
-                            class="text-sm font-medium text-[14px] text-gray-900"
+                            class="text-sm font-medium text-gray-900"
                         >
                             Add Admin
                         </h3>
@@ -50,12 +50,12 @@
                 <!-- Create Waiting List -->
                 <div
                     @click="showWaitModal = true"
-                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                    class="cursor-pointer group bg-white rounded-[10px] flex items-center space-x-4 transition"
                 >
                     <div
-                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                        class="bg-tena-green w-[40px] h-[40px] flex items-center justify-center rounded-md"
                     >
-                        <i class="ri-admin-line text-white text-[14px]"></i>
+                        <i class="ri-admin-line text-white text-[18px]"></i>
                     </div>
                     <div>
                         <h3 class="text-sm font-medium text-gray-900">
@@ -67,12 +67,12 @@
                 <!-- Download List -->
                 <div
                     @click="exportWaitingList"
-                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                    class="cursor-pointer bg-white rounded-[10px] flex items-center space-x-4 transition"
                 >
                     <div
-                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                        class="bg-tena-green w-[40px] h-[40px] flex items-center justify-center rounded-md"
                     >
-                        <i class="ri-download-line text-white text-[14px]"></i>
+                        <i class="ri-download-line text-white text-[18px]"></i>
                     </div>
                     <div>
                         <h3 class="text-sm font-medium text-gray-900">
@@ -84,12 +84,12 @@
                 <!-- Generate Link -->
                 <div
                     @click="generateShareLink"
-                    class="cursor-pointer bg-white p-2 rounded-[10px] flex items-center space-x-4 hover:bg-gray-100 transition"
+                    class="cursor-pointer bg-white rounded-[10px] flex items-center space-x-4 transition"
                 >
                     <div
-                        class="bg-tena-green w-[24px] h-[24px] flex items-center justify-center rounded-md"
+                        class="bg-tena-green w-[40px] h-[40px] flex items-center justify-center rounded-md p-2"
                     >
-                        <i class="ri-link text-white text-[14px]"></i>
+                        <i class="ri-link text-white text-[18px]"></i>
                     </div>
                     <div>
                         <h3 class="text-sm font-medium text-gray-900">
