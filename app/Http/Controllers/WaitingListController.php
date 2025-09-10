@@ -47,6 +47,11 @@ class WaitingListController extends Controller
 
         // --- Merge UTMs into validated data ---
         $dataToSave = array_merge($validated, $utm);
+        
+        // Set signup_source to utm_source if available
+        if (isset($utm['utm_source']) && !empty($utm['utm_source'])) {
+            $dataToSave['signup_source'] = $utm['utm_source'];
+        }
 
         WaitingList::create($dataToSave);
 
