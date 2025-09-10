@@ -6,7 +6,7 @@
                 <div class="flex justify-between items-center">
                     <!-- Logo -->
                     <a href="/" class="flex-shrink-0 group">
-                        <img class="h-8 w-auto transform transition-transform group-hover:scale-105"
+                        <img class="h-7 md:h-8 w-auto transform transition-transform group-hover:scale-105"
                             src="{{ asset('logo/logo-teal.svg') }}" alt="Logo">
                     </a>
 
@@ -31,7 +31,7 @@
 
             <div class="max-w-2xl w-full space-y-4 md:space-y-6 text-center content-wrapper">
 
-                <h1 class="text-3xl md:text-5xl font-bold text-[#10b982] mb-2 md:mb-4 leading-[1.3]">The Future of
+                <h1 class="text-2xl md:text-5xl font-bold text-[#10b982] mb-2 md:mb-4 leading-[1.3]">The Future of
                     Pharmacies <br> in Ethiopia – Coming Soon.</h1>
                 <p class="text-gray-600 text-sm md:text-lg mb-4 md:mb-6 max-w-md mx-auto px-2 md:px-4">
                     Order medicines online, or grow your pharmacy business with TenaMart.
