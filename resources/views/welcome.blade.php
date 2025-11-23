@@ -71,6 +71,39 @@
             </div>
         </div>
 
+        <!-- Demo Promotion Section -->
+        <section class="py-16 md:py-20 px-6 bg-white">
+            <div class="mx-auto max-w-4xl relative overflow-hidden">
+                <!-- Decorative accents -->
+                <span class="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-[#10b982]/10 blur-3xl"></span>
+                <span class="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-[#10b982]/10 blur-3xl"></span>
+                <div class="bg-white rounded-xl border border-neutral-200 p-8 md:p-10 text-center space-y-4 md:space-y-5 shadow-sm">
+                    <div class="flex items-center justify-center gap-2 md:gap-3">
+                        <h2 class="text-2xl md:text-3xl font-bold text-neutral-900">
+                            Try our <span class="text-[#10b982]">demo</span> today
+                        </h2>
+                        <i class="ri-arrow-right-up-line text-[#10b982] text-xl md:text-2xl"></i>
+                    </div>
+                    <p class="text-neutral-600 text-sm md:text-base max-w-2xl mx-auto px-4">
+                        Explore our fully functional demo and see how TenaMart works.
+                    </p>
+
+                    <div class="pt-2">
+                        <a href="https://demo.tenamart.et" target="_blank"
+                            class="relative cursor-pointer w-fit px-6 py-3 rounded-full font-semibold text-white bg-[#10b982] mx-auto inline-flex items-center gap-2 overflow-hidden transition-all duration-200 hover:bg-[#0fa972] hover:shadow-md hover:-translate-y-0.5">
+                            <!-- White dotted pattern -->
+                            <span
+                                class="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] [background-size:10px_10px] opacity-20"></span>
+
+                            <!-- Button content (above dots) -->
+                            <span class="relative">Visit demo site</span>
+                            <i class="ri-arrow-right-up-line relative"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="how-it-works" class="py-24 px-6 md:py-28 bg-white">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center space-y-6 mb-12 md:mb-16">
@@ -162,6 +195,19 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="mt-14 text-center">
+                    <a href="https://demo.tenamart.et" target="_blank"
+                        class="relative cursor-pointer w-fit px-6 py-3 rounded-full font-semibold text-white bg-[#10b982] mx-auto inline-flex items-center gap-2 overflow-hidden transition-all duration-200 hover:bg-[#0fa972] hover:shadow-md hover:-translate-y-0.5">
+                        <!-- White dotted pattern -->
+                        <span
+                            class="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] [background-size:10px_10px] opacity-20"></span>
+
+                        <!-- Button content (above dots) -->
+                        <span class="relative">View demo</span>
+                        <i class="ri-arrow-right-up-line relative"></i>
+                    </a>
                 </div>
             </div>
         </section>
@@ -441,13 +487,10 @@
 
         <section class="py-24 md:py-28 px-6">
             <div class="mx-auto max-w-6xl">
-                <div
-                    class="relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-br from-[#10b982]/5 via-white to-white p-8 md:p-12 shadow-sm">
+                <div class="relative overflow-hidden rounded-2xl border border-neutral-200 bg-gradient-to-br from-[#10b982]/5 via-white to-white p-8 md:p-12 shadow-sm">
                     <!-- Decorative accents -->
-                    <span
-                        class="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-[#10b982]/10 blur-3xl"></span>
-                    <span
-                        class="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-[#10b982]/10 blur-3xl"></span>
+                    <span class="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-[#10b982]/10 blur-3xl"></span>
+                    <span class="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-[#10b982]/10 blur-3xl"></span>
 
                     <div class="relative text-center max-w-2xl mx-auto">
                         <h2 class="text-2xl md:text-4xl font-bold text-neutral-900">Be first to try TenaMart</h2>
