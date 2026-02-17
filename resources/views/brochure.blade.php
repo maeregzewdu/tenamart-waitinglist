@@ -4,10 +4,10 @@
         <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-200">
             <div class="px-6 py-4 flex justify-between items-center">
                 <a href="/" class="group">
-                    <img class="h-6 w-auto transform transition-transform group-hover:scale-105"
+                    <img class="h-6 w-auto"
                         src="{{ asset('logo/logo-teal.svg') }}" alt="Logo">
                 </a>
-                <a href="/" class="text-xs font-medium text-neutral-500 hover:text-[#10b982]">
+                <a href="/" class="text-xs font-medium text-neutral-500">
                     <i class="ri-home-4-line mr-1"></i> Back Home
                 </a>
             </div>
@@ -28,7 +28,7 @@
                          class="w-full h-auto rounded-xl shadow-md border border-neutral-200">
                     <div class="mt-3 flex justify-end">
                         <button onclick="downloadBrochure('tenamart_brochure_1.png')"
-                                class="text-xs flex w-full justify-center items-center gap-1.5 bg-[#19b380] border border-neutral-200 text-white px-3 py-2 rounded-lg hover:bg-neutral-50 transition-all">
+                                class="text-xs flex w-full justify-center items-center gap-1.5 bg-[#19b380] border border-neutral-200 text-white px-3 py-2 rounded-lg">
                             <i class="ri-download-line font-normal"></i>
                             Save Image
                         </button>
@@ -42,7 +42,7 @@
                          class="w-full h-auto rounded-xl shadow-md border border-neutral-200">
                     <div class="mt-3 flex justify-end">
                         <button onclick="downloadBrochure('tenamart_brochure_2.png')"
-                                class="text-xs flex w-full justify-center items-center gap-1.5 bg-[#19b380] border border-neutral-200 text-white px-3 py-2 rounded-lg hover:bg-neutral-50 transition-all">
+                                class="text-xs flex w-full justify-center items-center gap-1.5 bg-[#19b380] border border-neutral-200 text-white px-3 py-2 rounded-lg">
                             <i class="ri-download-line font-normal"></i>
                             Save Image
                         </button>
@@ -69,7 +69,7 @@
                 document.body.removeChild(link);
 
                 setTimeout(() => {
-                    btn.innerHTML = '<i class="ri-checkbox-circle-line text-[#10b982]"></i>';
+                    btn.innerHTML = '<i class="ri-checkbox-line"></i> Saved';
                     setTimeout(() => {
                         btn.innerHTML = originalText;
                         btn.disabled = false;
