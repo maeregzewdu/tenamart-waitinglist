@@ -2,13 +2,10 @@
     <body class="bg-neutral-50">
         <!-- Minimal Nav -->
         <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-200">
-            <div class="px-6 py-4 flex justify-between items-center">
+            <div class="px-6 py-4 flex justify-center items-center">
                 <a href="/" class="group">
-                    <img class="h-6 w-auto"
+                    <img class="h-12 w-auto"
                         src="{{ asset('logo/logo-teal.svg') }}" alt="Logo">
-                </a>
-                <a href="/" class="text-xs font-medium text-neutral-500">
-                    <i class="ri-home-4-line mr-1"></i> Back Home
                 </a>
             </div>
         </nav>
@@ -57,7 +54,7 @@
                 const originalText = btn.innerHTML;
 
                 // Visual feedback
-                btn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
+                btn.innerHTML = 'Saving...';
                 btn.disabled = true;
 
                 // Create a hidden link and click it to trigger the Laravel download response
@@ -69,7 +66,7 @@
                 document.body.removeChild(link);
 
                 setTimeout(() => {
-                    btn.innerHTML = '<i class="ri-checkbox-line"></i> Saved';
+                    btn.innerHTML = '<i class="ri-check-line"></i> Saved';
                     setTimeout(() => {
                         btn.innerHTML = originalText;
                         btn.disabled = false;
