@@ -5,6 +5,7 @@ use App\Http\Controllers\WaitingListController;
 use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AgreementController;
+use App\Http\Controllers\BrochureController;
 use App\Models\User;
 
 Route::get('/', function () {
@@ -17,6 +18,9 @@ Route::post('/waiting-list', [WaitingListController::class, 'store']);
 Route::get('/terms', [AgreementController::class, 'terms']);
 Route::get('/privacy-policy', [AgreementController::class, 'privacyPolicy']);
 Route::get('/data-processing', [AgreementController::class, 'dataProcessing']);
+
+Route::get('/brochure', [BrochureController::class, 'index']);
+Route::get('/brochure/download/{filename}', [BrochureController::class, 'download']);
 
 Route::middleware(['auth'])->group(function () {
     Route::post('/create-admin', [RegisteredUserController::class, 'createAdmin']);
