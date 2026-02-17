@@ -11,8 +11,8 @@
   <header class="border-b border-neutral-200">
     <div class="max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
       <a href="/" class="inline-flex items-center gap-2 text-neutral-900 font-semibold hover:opacity-80">
-        <img class="h-8 w-auto transform transition-transform group-hover:scale-105" 
-        src="{{ asset('logo/logo-teal.svg') }}" 
+        <img class="h-8 w-auto transform transition-transform group-hover:scale-105"
+        src="{{ asset('logo/logo-teal.svg') }}"
         alt="Logo">
       </a>
       <a href="/" class="text-sm text-[#10b982] hover:underline">Back to site</a>

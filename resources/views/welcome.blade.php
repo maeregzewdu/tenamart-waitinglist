@@ -1,12 +1,11 @@
 <x-layout>
-
     <body class="font-['Raleway']">
         <nav class="mx-auto">
             <div class="px-6 md:px-16 pt-8">
                 <div class="flex justify-between items-center">
                     <!-- Logo -->
                     <a href="/" class="flex-shrink-0 group">
-                        <img class="h-7 md:h-8 w-auto transform transition-transform group-hover:scale-105"
+                        <img class="h-10 md:h-12 w-auto transform transition-transform group-hover:scale-105"
                             src="{{ asset('logo/logo-teal.svg') }}" alt="Logo">
                     </a>
 
@@ -546,7 +545,7 @@
                             </div>
                             <div class=" flex-col gap-8 items-center justify-between hidden md:flex md:flex-shrink-0">
                                 <a href="/" class="flex-shrink-0 group">
-                                    <img class="h-8 w-auto transform transition-transform group-hover:scale-105"
+                                    <img class="h-10 md:h-12 w-auto transform transition-transform group-hover:scale-105"
                                         src="{{ asset('logo/logo-teal.svg') }}" alt="Logo">
                                 </a>
                                 <div class="flex gap-2 text-neutral-700">
