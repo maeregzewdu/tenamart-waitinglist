@@ -17,7 +17,7 @@ class BrochureController extends Controller
 
     /**
      * Handle the brochure download request.
-     * 
+     *
      * @param string $filename
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
@@ -25,21 +25,21 @@ class BrochureController extends Controller
     {
         // Define allowed files for robustness
         $allowedFiles = [
-            'b2ff1712-1.png',
-            'b2ff1712-2.png'
+            'tenamart_brochure_1.png',
+            'tenamart_brochure_2.png'
         ];
 
         // Validating the file request
         if (in_array($filename, $allowedFiles)) {
-            $path = 'brochure/' . $filename;
+            $path = public_path($filename);
 
             // Check if file exists in the public disk
-            if (Storage::disk('public')->exists($path)) {
-                return Storage::disk('public')->download($path);
+            if (!file_exists($path)) {
+                abort(404, 'File not found');
             }
+            return response()->download($path);
         }
 
-        // Return 404 if file is not allowed or doesn't exist
-        abort(404, 'File not found');
+        abort(403);
     }
 }

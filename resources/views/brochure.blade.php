@@ -17,34 +17,34 @@
         <main class="max-w-md mx-auto px-4 pt-6 pb-32">
             <div class="space-y-6">
                 <div class="space-y-2 text-center mb-8">
-                    <h1 class="text-xl font-bold text-neutral-900">TenaMart Brochure</h1>
+                    <h1 class="text-xl font-bold text-neutral-900">TenaBrochure</h1>
                     <p class="text-sm text-neutral-600">The future of pharmacies in Ethiopia</p>
                 </div>
 
                 <!-- Page 1 -->
                 <div class="relative group">
-                    <img src="{{ asset('storage/brochure/b2ff1712-1.webp') }}" 
-                         alt="Brochure Page 1" 
+                    <img src="/tenamart_brochure_1.webp"
+                         alt="Brochure Page 1"
                          class="w-full h-auto rounded-xl shadow-md border border-neutral-200">
                     <div class="mt-3 flex justify-end">
-                        <button onclick="downloadBrochure('b2ff1712-1.png')" 
-                                class="text-xs flex items-center gap-1.5 bg-white border border-neutral-200 text-neutral-600 px-3 py-1.5 rounded-lg hover:bg-neutral-50 hover:border-[#10b982] hover:text-[#10b982] transition-all">
+                        <button onclick="downloadBrochure('tenamart_brochure_1.png')"
+                                class="text-xs flex w-full justify-center items-center gap-1.5 bg-[#19b380] border border-neutral-200 text-white px-3 py-2 rounded-lg hover:bg-neutral-50 transition-all">
                             <i class="ri-download-line font-normal"></i>
-                            Download Page 1 (PNG)
+                            Save Image
                         </button>
                     </div>
                 </div>
 
                 <!-- Page 2 -->
                 <div class="relative group">
-                    <img src="{{ asset('storage/brochure/b2ff1712-2.webp') }}" 
-                         alt="Brochure Page 2" 
+                    <img src="/tenamart_brochure_2.webp"
+                         alt="Brochure Page 2"
                          class="w-full h-auto rounded-xl shadow-md border border-neutral-200">
                     <div class="mt-3 flex justify-end">
-                        <button onclick="downloadBrochure('b2ff1712-2.png')" 
-                                class="text-xs flex items-center gap-1.5 bg-white border border-neutral-200 text-neutral-600 px-3 py-1.5 rounded-lg hover:bg-neutral-50 hover:border-[#10b982] hover:text-[#10b982] transition-all">
+                        <button onclick="downloadBrochure('tenamart_brochure_2.png')"
+                                class="text-xs flex w-full justify-center items-center gap-1.5 bg-[#19b380] border border-neutral-200 text-white px-3 py-2 rounded-lg hover:bg-neutral-50 transition-all">
                             <i class="ri-download-line font-normal"></i>
-                            Download Page 2 (PNG)
+                            Save Image
                         </button>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
             function downloadBrochure(file) {
                 const btn = event.currentTarget;
                 const originalText = btn.innerHTML;
-                
+
                 // Visual feedback
                 btn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i>';
                 btn.disabled = true;
