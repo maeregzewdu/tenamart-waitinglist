@@ -84,7 +84,7 @@
                     </p>
 
                     <div class="pt-2">
-                        <a href="https://demo.tenamart.et" target="_blank"
+                        <a href="https://inventory.tenamart.et" target="_blank"
                             class="relative cursor-pointer w-fit px-6 py-3 rounded-full font-semibold text-white bg-[#10b982] mx-auto inline-flex items-center gap-2 overflow-hidden transition-all duration-200 hover:bg-[#0fa972] hover:shadow-md hover:-translate-y-0.5">
                             <!-- White dotted pattern -->
                             <span
@@ -193,7 +193,7 @@
                 </div>
 
                 <div class="mt-14 text-center">
-                    <a href="https://demo.tenamart.et" target="_blank"
+                    <a href="https://inventory.tenamart.et" target="_blank"
                         class="relative cursor-pointer w-fit px-6 py-3 rounded-full font-semibold text-white bg-[#10b982] mx-auto inline-flex items-center gap-2 overflow-hidden transition-all duration-200 hover:bg-[#0fa972] hover:shadow-md hover:-translate-y-0.5">
                         <!-- White dotted pattern -->
                         <span
