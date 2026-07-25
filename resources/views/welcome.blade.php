@@ -39,13 +39,9 @@
                 <form action="/waiting-list" method="post" id="waitlistForm"
                     class="max-w-md mx-auto space-y-3 md:space-y-4 px-2 md:px-4">
                     @csrf
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                    <div class="space-y-3 md:space-y-4">
                         <input type="text" id="nameInput" name="name" placeholder="Your Name" required
                             class="w-full bg-white px-3 md:px-4 py-2 md:py-2.5 rounded-lg border-2 border-gray-200 focus:border-[#10b982] focus:ring-2 focus:ring-[#10b982]/20 outline-none transition-all duration-200 text-gray-700 text-sm md:text-base">
-                        <input type="email" name="email" placeholder="Your Email" required
-                            class="w-full bg-white px-3 md:px-4 py-2 md:py-2.5 rounded-lg border-2 border-gray-200 focus:border-[#10b982] focus:ring-2 focus:ring-[#10b982]/20 outline-none transition-all duration-200 text-gray-700 text-sm md:text-base">
-                    </div>
-                    <div>
                         <input type="text" name="phone" placeholder="Your Phone Number" required
                             class="w-full bg-white px-3 md:px-4 py-2 md:py-2.5 rounded-lg border-2 border-gray-200 focus:border-[#10b982] focus:ring-2 focus:ring-[#10b982]/20 outline-none transition-all duration-200 text-gray-700 text-sm md:text-base">
                     </div>
@@ -79,12 +75,12 @@
                 <div class="bg-white rounded-xl border border-neutral-200 p-8 md:p-10 text-center space-y-4 md:space-y-5 shadow-sm">
                     <div class="flex items-center justify-center gap-2 md:gap-3">
                         <h2 class="text-2xl md:text-3xl font-bold text-neutral-900">
-                            Try our <span class="text-[#10b982]">demo</span> today
+                            Try our <span class="text-[#10b982]">pharmacy management system</span>
                         </h2>
                         <i class="ri-arrow-right-up-line text-[#10b982] text-xl md:text-2xl"></i>
                     </div>
                     <p class="text-neutral-600 text-sm md:text-base max-w-2xl mx-auto px-4">
-                        Explore our fully functional demo and see how TenaMart works.
+                        See how TenaMart helps pharmacies manage inventory, orders, and daily operations.
                     </p>
 
                     <div class="pt-2">
@@ -95,7 +91,7 @@
                                 class="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] [background-size:10px_10px] opacity-20"></span>
 
                             <!-- Button content (above dots) -->
-                            <span class="relative">Visit demo site</span>
+                            <span class="relative">Try it now</span>
                             <i class="ri-arrow-right-up-line relative"></i>
                         </a>
                     </div>
@@ -204,7 +200,7 @@
                             class="absolute inset-0 bg-[radial-gradient(white_1px,transparent_1px)] [background-size:10px_10px] opacity-20"></span>
 
                         <!-- Button content (above dots) -->
-                        <span class="relative">View demo</span>
+                        <span class="relative">Try it now</span>
                         <i class="ri-arrow-right-up-line relative"></i>
                     </a>
                 </div>

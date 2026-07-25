@@ -15,9 +15,7 @@ class WaitingListController extends Controller
     {
         $validated = $request->validated();
 
-        $exists = WaitingList::where('email', $validated['email'])
-            ->orWhere('phone', $validated['phone'])
-            ->exists();
+        $exists = WaitingList::where('phone', $validated['phone'])->exists();
 
         if ($exists) {
             $message = 'You are already on the waiting list!';
